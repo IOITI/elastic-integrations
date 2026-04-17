@@ -1,0 +1,230 @@
+- name: devolutions_server
+  type: group
+  fields:
+    - name: application
+      type: keyword
+      description: |
+        Header application or host label emitted in the Devolutions Server log line.
+    - name: service
+      type: keyword
+      description: |
+        Devolutions Server log family or service name used for pipeline routing.
+    - name: client
+      type: group
+      fields:
+        - name: ip_list
+          type: ip
+          description: |
+            Client IP values extracted from the trailing ClientIP list.
+    - name: login
+      type: group
+      fields:
+        - name: failure_reason
+          type: keyword
+          description: |
+            Failure reason reported for a failed login attempt.
+        - name: client_application
+          type: keyword
+          description: |
+            Client application reported in the login event.
+        - name: client_os
+          type: keyword
+          description: |
+            Client operating system reported in the login event.
+        - name: client_version
+          type: keyword
+          description: |
+            Client version reported in the login event.
+    - name: session_management
+      type: group
+      fields:
+        - name: action
+          type: keyword
+          description: |
+            Raw session management action reported by Devolutions Server.
+    - name: personal_connection
+      type: group
+      fields:
+        - name: client_application
+          type: keyword
+          description: |
+            Client application that triggered the personal connection event.
+        - name: client_version
+          type: keyword
+          description: |
+            Client version that triggered the personal connection event.
+        - name: close_mode
+          type: keyword
+          description: |
+            Close mode reported for the personal connection event.
+        - name: connection_host_name
+          type: keyword
+          description: |
+            Host name or IP address associated with the connection target.
+        - name: connection_id
+          type: keyword
+          description: |
+            Connection identifier reported by Devolutions Server.
+        - name: connection_name
+          type: keyword
+          description: |
+            Connection name associated with the audited action.
+        - name: connection_type_name
+          type: keyword
+          description: |
+            Connection type associated with the audited action.
+        - name: connection_user_name
+          type: keyword
+          description: |
+            Target account used on the connection.
+        - name: group_name
+          type: keyword
+          description: |
+            Group path associated with the connection.
+        - name: is_embedded
+          type: boolean
+          description: |
+            Indicates whether the connection was opened in embedded mode.
+        - name: localized_message
+          type: keyword
+          description: |
+            Localized descriptive prefix that precedes MessageType in the event.
+        - name: logged_user_name
+          type: keyword
+          description: |
+            Identity authenticated to Devolutions Server when the event was recorded.
+        - name: login_history_id
+          type: keyword
+          description: |
+            Login history identifier associated with the event.
+        - name: machine_name
+          type: keyword
+          description: |
+            Client machine name reported in the event.
+        - name: message_sub_type
+          type: keyword
+          description: |
+            Personal connection message subtype reported by Devolutions Server.
+        - name: message_type
+          type: keyword
+          description: |
+            Personal connection message type reported by Devolutions Server.
+        - name: open_mode
+          type: keyword
+          description: |
+            Open mode reported for the personal connection event.
+        - name: pam_credential_id
+          type: keyword
+          description: |
+            PAM credential identifier associated with the event.
+        - name: repository_id
+          type: keyword
+          description: |
+            Repository identifier associated with the event.
+        - name: security_group
+          type: keyword
+          description: |
+            Security group value reported by Devolutions Server.
+        - name: support_close
+          type: boolean
+          description: |
+            Indicates whether support close mode was enabled.
+        - name: user_info_id
+          type: keyword
+          description: |
+            User info identifier associated with the event.
+        - name: user_name
+          type: keyword
+          description: |
+            Target user name reported in the personal connection record.
+    - name: admin
+      type: group
+      fields:
+        - name: migration_name
+          type: keyword
+          description: |
+            Migration component name reported by UpgradeServer events.
+        - name: cleanup
+          type: group
+          fields:
+            - name: started_by
+              type: keyword
+              description: |
+                Actor or scheduler that started the cleanup task.
+            - name: backup_log
+              type: group
+              fields:
+                - name: archived_entries
+                  type: long
+                  description: |
+                    Number of archived BackupLog entries.
+                - name: purged_archives
+                  type: long
+                  description: |
+                    Number of purged BackupLog archives.
+            - name: connection_log
+              type: group
+              fields:
+                - name: archived_entries
+                  type: long
+                  description: |
+                    Number of archived ConnectionLog entries.
+                - name: purged_archives
+                  type: long
+                  description: |
+                    Number of purged ConnectionLog archives.
+            - name: login_attempt
+              type: group
+              fields:
+                - name: archived_entries
+                  type: long
+                  description: |
+                    Number of archived LoginAttempt entries.
+                - name: purged_archives
+                  type: long
+                  description: |
+                    Number of purged LoginAttempt archives.
+            - name: login_history
+              type: group
+              fields:
+                - name: archived_entries
+                  type: long
+                  description: |
+                    Number of archived LoginHistory entries.
+                - name: purged_archives
+                  type: long
+                  description: |
+                    Number of purged LoginHistory archives.
+            - name: log_message
+              type: group
+              fields:
+                - name: archived_entries
+                  type: long
+                  description: |
+                    Number of archived LogMessage entries.
+                - name: purged_archives
+                  type: long
+                  description: |
+                    Number of purged LogMessage archives.
+            - name: pam_log
+              type: group
+              fields:
+                - name: archived_entries
+                  type: long
+                  description: |
+                    Number of archived PamLog entries.
+                - name: purged_archives
+                  type: long
+                  description: |
+                    Number of purged PamLog archives.
+            - name: user_info_history
+              type: group
+              fields:
+                - name: archived_entries
+                  type: long
+                  description: |
+                    Number of archived UserInfoHistory entries.
+                - name: purged_archives
+                  type: long
+                  description: |
+                    Number of purged UserInfoHistory archives.

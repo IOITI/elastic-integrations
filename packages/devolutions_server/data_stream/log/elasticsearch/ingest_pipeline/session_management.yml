@@ -1,0 +1,111 @@
+---
+description: Pipeline for parsing Devolutions Server session management events
+processors:
+  - dissect:
+      tag: dissect_session_management_message
+      field: _tmp_message
+      pattern: 'userID %{user.id} : %{devolutions_server.session_management.action}'
+      if: ctx._tmp_message != null && ctx._tmp_message.startsWith('userID ')
+      ignore_failure: true
+  - dissect:
+      tag: dissect_session_management_error
+      field: _tmp_message
+      pattern: '%{_temp.session_management.error_type} - %{event.reason}'
+      if: ctx._tmp_message != null && !ctx._tmp_message.startsWith('userID ') && ctx._tmp_message.contains(' - ')
+      ignore_failure: true
+  - set:
+      tag: set_event_action
+      field: event.action
+      copy_from: devolutions_server.session_management.action
+      if: ctx.devolutions_server?.session_management?.action != null
+      ignore_empty_value: true
+  - set:
+      tag: set_event_action_error
+      field: event.action
+      copy_from: _temp.session_management.error_type
+      if: ctx.event?.action == null && ctx._temp?.session_management?.error_type != null
+      ignore_empty_value: true
+  - gsub:
+      tag: gsub_event_action_camel_case
+      field: event.action
+      pattern: '([a-z0-9])([A-Z])'
+      replacement: '$1-$2'
+      ignore_missing: true
+  - lowercase:
+      tag: lowercase_event_action
+      field: event.action
+      ignore_missing: true
+  - gsub:
+      tag: gsub_event_action_non_word
+      field: event.action
+      pattern: '[^a-z0-9]+'
+      replacement: '-'
+      ignore_missing: true
+  - gsub:
+      tag: gsub_event_action_trim_dash
+      field: event.action
+      pattern: '(^-+|-+$)'
+      replacement: ''
+      ignore_missing: true
+  - set:
+      tag: set_event_outcome_success
+      field: event.outcome
+      value: success
+      if: ctx.devolutions_server?.session_management?.action != null
+  - set:
+      tag: set_event_outcome_failure
+      field: event.outcome
+      value: failure
+      if: ctx.event?.reason != null && ctx.devolutions_server?.session_management?.action == null
+  - append:
+      tag: append_event_category
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.session_management?.action != null
+      allow_duplicates: false
+  - append:
+      tag: append_event_type
+      field: event.type
+      value: change
+      if: ctx.devolutions_server?.session_management?.action != null
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_error
+      field: event.type
+      value: error
+      if: ctx.event?.reason != null && ctx.devolutions_server?.session_management?.action == null
+      allow_duplicates: false
+  - set:
+      tag: set_source_address
+      field: source.address
+      copy_from: devolutions_server.client.ip_list.0
+      if: ctx.devolutions_server?.client?.ip_list instanceof List && ctx.devolutions_server.client.ip_list.size() > 0
+      ignore_empty_value: true
+  - convert:
+      tag: convert_source_address_to_source_ip
+      field: source.address
+      target_field: source.ip
+      type: ip
+      ignore_missing: true
+      ignore_failure: true
+  - append:
+      tag: append_related_user_id
+      field: related.user
+      value: '{{{user.id}}}'
+      if: ctx.user?.id != null
+      allow_duplicates: false
+
+on_failure:
+  - set:
+      field: event.kind
+      value: pipeline_error
+  - append:
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{#_ingest.on_failure_processor_tag}}with tag '{{{ _ingest.on_failure_processor_tag }}}' {{/_ingest.on_failure_processor_tag}}in pipeline '{{{ _ingest.pipeline }}}'
+        failed with message '{{{ _ingest.on_failure_message }}}'
+  - append:
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false

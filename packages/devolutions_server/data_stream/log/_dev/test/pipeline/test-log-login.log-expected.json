@@ -1,0 +1,271 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-04-15T09:35:51.290Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "login": {
+                    "client_application": "RDM",
+                    "client_os": "Windows",
+                    "client_version": "2025.3.22.0"
+                },
+                "service": "Login"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "login",
+                "category": [
+                    "authentication"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:35:51.290537+02:00 192.168.1.241 Devolutions Server 13348 Login - [3] Login successful username@services.corp.com : Windows - RDM - 2025.3.22.0 [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "severity": 3,
+                "timezone": "+02:00",
+                "type": [
+                    "start"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com"
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:16:32.671Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "login": {
+                    "client_application": "Cli",
+                    "client_os": "Windows",
+                    "client_version": "2025.3.8.0"
+                },
+                "service": "Login"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "login",
+                "category": [
+                    "authentication"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:16:32.671265+02:00 192.168.1.241 Devolutions Server 13348 Login - [3] Login successful Powershell - Forge (Application) : Windows - Cli - 2025.3.8.0 [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "severity": 3,
+                "timezone": "+02:00",
+                "type": [
+                    "start"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "Powershell - Forge (Application)"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "name": "Powershell - Forge (Application)"
+            }
+        },
+        {
+            "@timestamp": "2026-04-13T15:16:40.274Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "login": {
+                    "failure_reason": "UserNamePassword"
+                },
+                "service": "Login"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "login",
+                "category": [
+                    "authentication"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-13T17:16:40.274236+02:00 192.168.1.241 Devolutions Server 17152 Login - [3] Failed Login Attempt: User 5b10b7a2-dd93-44fd-932d-dfd961403f47 : UserNamePassword [ClientIP: 192.168.1.253]",
+                "outcome": "failure",
+                "reason": "UserNamePassword",
+                "severity": 3,
+                "timezone": "+02:00",
+                "type": [
+                    "start"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 17152
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "5b10b7a2-dd93-44fd-932d-dfd961403f47"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "name": "5b10b7a2-dd93-44fd-932d-dfd961403f47"
+            }
+        },
+        {
+            "@timestamp": "2026-03-31T08:29:04.181Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "login": {
+                    "failure_reason": "UserApplicationAccessDenied"
+                },
+                "service": "Login"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "login",
+                "category": [
+                    "authentication"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-03-31T10:29:04.181853+02:00 192.168.1.241 Devolutions Server 14788 Login - [3] Failed Login Attempt: User adminstrator : UserApplicationAccessDenied [ClientIP: 192.168.1.253]",
+                "outcome": "failure",
+                "reason": "UserApplicationAccessDenied",
+                "severity": 3,
+                "timezone": "+02:00",
+                "type": [
+                    "start"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 14788
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "adminstrator"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "name": "adminstrator"
+            }
+        }
+    ]
+}

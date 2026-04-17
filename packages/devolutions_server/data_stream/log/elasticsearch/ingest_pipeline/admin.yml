@@ -1,0 +1,261 @@
+---
+description: Pipeline for parsing Devolutions Server administrative and system events
+processors:
+  - gsub:
+      tag: gsub_message_trim_trailing_dash
+      field: _tmp_message
+      pattern: '\\s+-\\s*$'
+      replacement: ''
+      if: ctx._tmp_message != null
+      ignore_missing: true
+  - set:
+      tag: set_source_address
+      field: source.address
+      copy_from: devolutions_server.client.ip_list.0
+      if: ctx.devolutions_server?.client?.ip_list instanceof List && ctx.devolutions_server.client.ip_list.size() == 1
+      ignore_empty_value: true
+  - convert:
+      tag: convert_source_address_to_source_ip
+      field: source.address
+      target_field: source.ip
+      type: ip
+      ignore_missing: true
+      ignore_failure: true
+  - set:
+      tag: set_event_action_heartbeat
+      field: event.action
+      value: syslog-heartbeat
+      if: ctx.devolutions_server?.service == 'Syslog heartbeat'
+  - append:
+      tag: append_event_type_heartbeat
+      field: event.type
+      value: info
+      if: ctx.devolutions_server?.service == 'Syslog heartbeat'
+      allow_duplicates: false
+  - dissect:
+      tag: dissect_migration_message
+      field: _tmp_message
+      pattern: 'Migration completed (%{devolutions_server.admin.migration_name})'
+      if: ctx.devolutions_server?.service == 'UpgradeServer'
+  - set:
+      tag: set_event_action_migration
+      field: event.action
+      value: migration-completed
+      if: ctx.devolutions_server?.service == 'UpgradeServer'
+  - set:
+      tag: set_event_outcome_migration
+      field: event.outcome
+      value: success
+      if: ctx.devolutions_server?.service == 'UpgradeServer'
+  - append:
+      tag: append_event_category_migration
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.service == 'UpgradeServer'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_migration
+      field: event.type
+      value: change
+      if: ctx.devolutions_server?.service == 'UpgradeServer'
+      allow_duplicates: false
+  - dissect:
+      tag: dissect_cleanup_message
+      field: _tmp_message
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('Log cleanup results - Log cleanup started by ')
+      pattern: 'Log cleanup results - Log cleanup started by %{devolutions_server.admin.cleanup.started_by}:Results: BackupLog: %{devolutions_server.admin.cleanup.backup_log.archived_entries} Archived entries, %{devolutions_server.admin.cleanup.backup_log.purged_archives} Purged archives, ConnectionLog: %{devolutions_server.admin.cleanup.connection_log.archived_entries} Archived entries, %{devolutions_server.admin.cleanup.connection_log.purged_archives} Purged archives, LoginAttempt: %{devolutions_server.admin.cleanup.login_attempt.archived_entries} Archived entries, %{devolutions_server.admin.cleanup.login_attempt.purged_archives} Purged archives, LoginHistory: %{devolutions_server.admin.cleanup.login_history.archived_entries} Archived entries, %{devolutions_server.admin.cleanup.login_history.purged_archives} Purged archives, LogMessage: %{devolutions_server.admin.cleanup.log_message.archived_entries} Archived entries, %{devolutions_server.admin.cleanup.log_message.purged_archives} Purged archives, PamLog: %{devolutions_server.admin.cleanup.pam_log.archived_entries} Archived entries, %{devolutions_server.admin.cleanup.pam_log.purged_archives} Purged archives, UserInfoHistory: %{devolutions_server.admin.cleanup.user_info_history.archived_entries} Archived entries, %{devolutions_server.admin.cleanup.user_info_history.purged_archives} Purged archives, %{?cleanup_tail}'
+  - convert:
+      tag: convert_cleanup_backup_log_archived_entries
+      field: devolutions_server.admin.cleanup.backup_log.archived_entries
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.backup_log?.archived_entries != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_backup_log_purged_archives
+      field: devolutions_server.admin.cleanup.backup_log.purged_archives
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.backup_log?.purged_archives != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_connection_log_archived_entries
+      field: devolutions_server.admin.cleanup.connection_log.archived_entries
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.connection_log?.archived_entries != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_connection_log_purged_archives
+      field: devolutions_server.admin.cleanup.connection_log.purged_archives
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.connection_log?.purged_archives != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_login_attempt_archived_entries
+      field: devolutions_server.admin.cleanup.login_attempt.archived_entries
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.login_attempt?.archived_entries != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_login_attempt_purged_archives
+      field: devolutions_server.admin.cleanup.login_attempt.purged_archives
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.login_attempt?.purged_archives != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_login_history_archived_entries
+      field: devolutions_server.admin.cleanup.login_history.archived_entries
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.login_history?.archived_entries != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_login_history_purged_archives
+      field: devolutions_server.admin.cleanup.login_history.purged_archives
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.login_history?.purged_archives != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_log_message_archived_entries
+      field: devolutions_server.admin.cleanup.log_message.archived_entries
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.log_message?.archived_entries != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_log_message_purged_archives
+      field: devolutions_server.admin.cleanup.log_message.purged_archives
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.log_message?.purged_archives != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_pam_log_archived_entries
+      field: devolutions_server.admin.cleanup.pam_log.archived_entries
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.pam_log?.archived_entries != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_pam_log_purged_archives
+      field: devolutions_server.admin.cleanup.pam_log.purged_archives
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.pam_log?.purged_archives != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_user_info_history_archived_entries
+      field: devolutions_server.admin.cleanup.user_info_history.archived_entries
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.user_info_history?.archived_entries != null
+      ignore_failure: true
+  - convert:
+      tag: convert_cleanup_user_info_history_purged_archives
+      field: devolutions_server.admin.cleanup.user_info_history.purged_archives
+      type: long
+      if: ctx.devolutions_server?.admin?.cleanup?.user_info_history?.purged_archives != null
+      ignore_failure: true
+  - remove:
+      tag: remove_cleanup_tail
+      field: cleanup_tail
+      ignore_missing: true
+  - set:
+      tag: set_event_action_cleanup
+      field: event.action
+      value: log-cleanup
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('Log cleanup results - Log cleanup started by ')
+  - set:
+      tag: set_event_outcome_cleanup
+      field: event.outcome
+      value: success
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('Log cleanup results - Log cleanup started by ')
+  - append:
+      tag: append_event_category_cleanup
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('Log cleanup results - Log cleanup started by ')
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_cleanup
+      field: event.type
+      value: info
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('Log cleanup results - Log cleanup started by ')
+      allow_duplicates: false
+  - dissect:
+      tag: dissect_log_file_name
+      field: _tmp_message
+      pattern: 'LogFileName - %{file.path}'
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('LogFileName - ')
+  - set:
+      tag: set_event_action_logfile
+      field: event.action
+      value: logfile-name
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('LogFileName - ')
+  - append:
+      tag: append_event_category_logfile
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('LogFileName - ')
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_logfile
+      field: event.type
+      value: info
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message != null && ctx._tmp_message.startsWith('LogFileName - ')
+      allow_duplicates: false
+  - set:
+      tag: set_event_action_application_start
+      field: event.action
+      value: application-start
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message == 'Application_Start'
+  - append:
+      tag: append_event_category_application_start
+      field: event.category
+      value: process
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message == 'Application_Start'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_application_start
+      field: event.type
+      value: start
+      if: ctx.devolutions_server?.service == 'Default' && ctx._tmp_message == 'Application_Start'
+      allow_duplicates: false
+  - set:
+      tag: set_default_event_action
+      field: event.action
+      copy_from: devolutions_server.service
+      if: ctx.event?.action == null && ctx.devolutions_server?.service != null
+      ignore_empty_value: true
+  - lowercase:
+      tag: lowercase_default_event_action
+      field: event.action
+      if: ctx.event?.action != null
+      ignore_missing: true
+  - gsub:
+      tag: gsub_default_event_action
+      field: event.action
+      pattern: '[^a-z0-9]+'
+      replacement: '-'
+      if: ctx.event?.action != null
+      ignore_missing: true
+  - gsub:
+      tag: gsub_default_event_action_trim_dash
+      field: event.action
+      pattern: '(^-+|-+$)'
+      replacement: ''
+      if: ctx.event?.action != null
+      ignore_missing: true
+  - append:
+      tag: append_event_type_default
+      field: event.type
+      value: info
+      if: ctx.event?.type == null
+      allow_duplicates: false
+
+on_failure:
+  - set:
+      field: event.kind
+      value: pipeline_error
+  - append:
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{#_ingest.on_failure_processor_tag}}with tag '{{{ _ingest.on_failure_processor_tag }}}' {{/_ingest.on_failure_processor_tag}}in pipeline '{{{ _ingest.pipeline }}}'
+        failed with message '{{{ _ingest.on_failure_message }}}'
+  - append:
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false

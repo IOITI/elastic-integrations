@@ -1,0 +1,199 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-04-15T08:47:46.608Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "service": "SessionManagement",
+                "session_management": {
+                    "action": "ProfileUpdate"
+                }
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "profile-update",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T10:47:46.608839+02:00 192.168.1.241 Devolutions Server 13348 SessionManagement - [0] userID 94dd733b-2166-44b4-a059-e12116ba58ee : ProfileUpdate [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "severity": 0,
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "94dd733b-2166-44b4-a059-e12116ba58ee"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "id": "94dd733b-2166-44b4-a059-e12116ba58ee"
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T04:06:47.579Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "service": "SessionManagement",
+                "session_management": {
+                    "action": "ProfileUpdate"
+                }
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "profile-update",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T06:06:47.579548+02:00 192.168.1.241 Devolutions Server 13348 SessionManagement - [0] userID 94dd733b-2166-44b4-a059-e12116ba58ee : ProfileUpdate [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "severity": 0,
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "94dd733b-2166-44b4-a059-e12116ba58ee"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "id": "94dd733b-2166-44b4-a059-e12116ba58ee"
+            }
+        },
+        {
+            "@timestamp": "2026-04-14T23:45:38.954Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "service": "SessionManagement",
+                "session_management": {
+                    "action": "ProfileUpdate"
+                }
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "profile-update",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T01:45:38.954131+02:00 192.168.1.241 Devolutions Server 13348 SessionManagement - [0] userID 94dd733b-2166-44b4-a059-e12116ba58ee : ProfileUpdate [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "severity": 0,
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "94dd733b-2166-44b4-a059-e12116ba58ee"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "id": "94dd733b-2166-44b4-a059-e12116ba58ee"
+            }
+        }
+    ]
+}

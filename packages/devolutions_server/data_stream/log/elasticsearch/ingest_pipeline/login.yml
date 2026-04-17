@@ -1,0 +1,84 @@
+---
+description: Pipeline for parsing Devolutions Server login events
+processors:
+  - grok:
+      tag: grok_login_message
+      field: _tmp_message
+      patterns:
+        - '^Login successful %{DATA:_temp.login.identity} : %{DATA:devolutions_server.login.client_os} - %{DATA:devolutions_server.login.client_application} - %{GREEDYDATA:devolutions_server.login.client_version}$'
+        - '^Failed Login Attempt: User %{DATA:_temp.login.identity} : %{GREEDYDATA:devolutions_server.login.failure_reason}$'
+  - set:
+      tag: set_event_action
+      field: event.action
+      value: login
+  - set:
+      tag: set_event_outcome_success
+      field: event.outcome
+      value: success
+      if: ctx._tmp_message != null && ctx._tmp_message.startsWith('Login successful')
+  - set:
+      tag: set_event_outcome_failure
+      field: event.outcome
+      value: failure
+      if: ctx._tmp_message != null && ctx._tmp_message.startsWith('Failed Login Attempt:')
+  - append:
+      tag: append_event_category
+      field: event.category
+      value: authentication
+      allow_duplicates: false
+  - append:
+      tag: append_event_type
+      field: event.type
+      value: start
+      allow_duplicates: false
+  - set:
+      tag: set_event_reason_failure
+      field: event.reason
+      copy_from: devolutions_server.login.failure_reason
+      if: ctx.devolutions_server?.login?.failure_reason != null
+      ignore_empty_value: true
+  - set:
+      tag: set_user_name
+      field: user.name
+      copy_from: _temp.login.identity
+      ignore_empty_value: true
+  - set:
+      tag: set_user_email
+      field: user.email
+      copy_from: _temp.login.identity
+      if: ctx._temp?.login?.identity instanceof String && ctx._temp.login.identity.contains('@')
+      ignore_empty_value: true
+  - set:
+      tag: set_source_address
+      field: source.address
+      copy_from: devolutions_server.client.ip_list.0
+      if: ctx.devolutions_server?.client?.ip_list instanceof List && ctx.devolutions_server.client.ip_list.size() > 0
+      ignore_empty_value: true
+  - convert:
+      tag: convert_source_address_to_source_ip
+      field: source.address
+      target_field: source.ip
+      type: ip
+      ignore_missing: true
+      ignore_failure: true
+  - append:
+      tag: append_related_user_name
+      field: related.user
+      value: '{{{user.name}}}'
+      if: ctx.user?.name != null
+      allow_duplicates: false
+
+on_failure:
+  - set:
+      field: event.kind
+      value: pipeline_error
+  - append:
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{#_ingest.on_failure_processor_tag}}with tag '{{{ _ingest.on_failure_processor_tag }}}' {{/_ingest.on_failure_processor_tag}}in pipeline '{{{ _ingest.pipeline }}}'
+        failed with message '{{{ _ingest.on_failure_message }}}'
+  - append:
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false

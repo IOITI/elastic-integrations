@@ -1,0 +1,145 @@
+---
+description: Pipeline for parsing Devolutions Server logs
+processors:
+  - set:
+      tag: set_ecs_version
+      field: ecs.version
+      value: '9.3.0'
+  - set:
+      tag: set_event_original
+      field: event.original
+      copy_from: message
+      if: ctx.event?.original == null
+  - remove:
+      tag: remove_message_if_event_original
+      field: message
+      if: ctx.event?.original != null
+  - set:
+      tag: set_observer_vendor
+      field: observer.vendor
+      value: Devolutions
+  - set:
+      tag: set_observer_product
+      field: observer.product
+      value: Devolutions Server
+  - grok:
+      tag: grok_event_original
+      field: event.original
+      patterns:
+        - '^<%{NONNEGINT:log.syslog.priority:long}>%{NONNEGINT:log.syslog.version} %{DEVO_TIMESTAMP:_temp.timestamp} +%{IPORHOST:_temp.observer_ip} %{DATA:devolutions_server.application} %{POSINT:process.pid:long} %{DATA:devolutions_server.service} - \[%{NONNEGINT:event.severity:long}\] %{GREEDYDATA:_temp.message_with_client}$'
+      pattern_definitions:
+        DEVO_TIMESTAMP: '%{YEAR}-%{MONTHNUM}-%{MONTHDAY}T%{HOUR}:%{MINUTE}:%{SECOND}(?:%{ISO8601_TIMEZONE:event.timezone})?'
+  - date:
+      tag: date__temp_timestamp
+      field: _temp.timestamp
+      target_field: '@timestamp'
+      formats:
+        - ISO8601
+  - grok:
+      tag: grok__temp_message_with_client
+      field: _temp.message_with_client
+      patterns:
+        - '^%{DATA:_tmp_message} \[ClientIP:\s*%{GREEDYDATA:_temp.client_ip_list}\]$'
+        - '^%{GREEDYDATA:_tmp_message}$'
+      ignore_failure: true
+  - gsub:
+      tag: gsub__temp_client_ip_list_trim_commas
+      field: _temp.client_ip_list
+      pattern: '\\s*,\\s*'
+      replacement: ','
+      if: ctx._temp?.client_ip_list != null
+      ignore_missing: true
+  - gsub:
+      tag: gsub__temp_client_ip_list_trim_edges
+      field: _temp.client_ip_list
+      pattern: '(^\\s+|\\s+$)'
+      replacement: ''
+      if: ctx._temp?.client_ip_list != null
+      ignore_missing: true
+  - set:
+      tag: set_observer_name
+      field: observer.name
+      copy_from: devolutions_server.application
+      ignore_empty_value: true
+  - append:
+      tag: append_observer_ip
+      field: observer.ip
+      value: '{{{_temp.observer_ip}}}'
+      if: ctx._temp?.observer_ip != null
+      allow_duplicates: false
+  - append:
+      tag: append_related_ip_observer
+      field: related.ip
+      value: '{{{_temp.observer_ip}}}'
+      if: ctx._temp?.observer_ip != null
+      allow_duplicates: false
+  - split:
+      tag: split__temp_client_ip_list
+      field: _temp.client_ip_list
+      separator: ','
+      if: ctx._temp?.client_ip_list != null && ctx._temp.client_ip_list != ''
+  - rename:
+      tag: rename__temp_client_ip_list
+      field: _temp.client_ip_list
+      target_field: devolutions_server.client.ip_list
+      ignore_missing: true
+  - set:
+      tag: set_related_ip_from_client_list
+      field: related.ip
+      copy_from: devolutions_server.client.ip_list
+      if: ctx.devolutions_server?.client?.ip_list instanceof List && ctx.devolutions_server.client.ip_list.size() > 0 && ctx.related?.ip == null
+  - append:
+      tag: append_related_ip_client_0
+      field: related.ip
+      value: '{{{devolutions_server.client.ip_list.0}}}'
+      if: ctx.devolutions_server?.client?.ip_list instanceof List && ctx.devolutions_server.client.ip_list.size() > 0
+      allow_duplicates: false
+  - append:
+      tag: append_related_ip_client_1
+      field: related.ip
+      value: '{{{devolutions_server.client.ip_list.1}}}'
+      if: ctx.devolutions_server?.client?.ip_list instanceof List && ctx.devolutions_server.client.ip_list.size() > 1
+      allow_duplicates: false
+  - set:
+      tag: set_event_kind
+      field: event.kind
+      value: event
+  - pipeline:
+      tag: pipeline_login
+      if: ctx.devolutions_server?.service == 'Login'
+      name: '{{ IngestPipeline "login" }}'
+  - pipeline:
+      tag: pipeline_session_management
+      if: ctx.devolutions_server?.service == 'SessionManagement'
+      name: '{{ IngestPipeline "session_management" }}'
+  - pipeline:
+      tag: pipeline_personal_connection
+      if: ctx.devolutions_server?.service == 'PersonalConnection'
+      name: '{{ IngestPipeline "personal_connection" }}'
+  - pipeline:
+      tag: pipeline_admin
+      if: ctx.devolutions_server?.service != 'Login' && ctx.devolutions_server?.service != 'SessionManagement' && ctx.devolutions_server?.service != 'PersonalConnection'
+      name: '{{ IngestPipeline "admin" }}'
+  - remove:
+      tag: remove__temp
+      field: _temp
+      ignore_missing: true
+  - remove:
+      tag: remove__tmp_message
+      field: _tmp_message
+      ignore_missing: true
+
+on_failure:
+  - set:
+      field: event.kind
+      value: pipeline_error
+  - append:
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{#_ingest.on_failure_processor_tag}}with tag '{{{ _ingest.on_failure_processor_tag }}}' {{/_ingest.on_failure_processor_tag}}in pipeline '{{{ _ingest.pipeline }}}'
+        failed with message '{{{ _ingest.on_failure_message }}}'
+  - append:
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false

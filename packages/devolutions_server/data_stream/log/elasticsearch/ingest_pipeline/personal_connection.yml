@@ -1,0 +1,321 @@
+---
+description: Pipeline for parsing Devolutions Server personal connection events
+processors:
+  - dissect:
+      tag: dissect_personal_connection_message
+      field: _tmp_message
+      pattern: '%{devolutions_server.personal_connection.localized_message} - MessageType: %{devolutions_server.personal_connection.message_type}, MessageSubType: %{_temp.personal_connection.message_sub_type}, UserName: %{devolutions_server.personal_connection.user_name}, MachineName: %{devolutions_server.personal_connection.machine_name}, ConnectionName: %{_temp.personal_connection.connection_name}, ConnectionTypeName: %{_temp.personal_connection.connection_type_name}, ConnectionID: %{_temp.personal_connection.connection_id}, ConnectionHostName: %{_temp.personal_connection.connection_host_name}, ConnectionUserName: %{_temp.personal_connection.connection_user_name}, StartDateTime: %{_temp.personal_connection.start_date_time}, StartDateTimeUTC: %{?start_date_time_utc}, EndDateTime: %{_temp.personal_connection.end_date_time}, EndDateTimeUTC: %{?end_date_time_utc}, GroupName: %{devolutions_server.personal_connection.group_name}, Comment: %{?comment}, LoggedUserName: %{devolutions_server.personal_connection.logged_user_name}, LoginHistoryID: %{devolutions_server.personal_connection.login_history_id}, Prompt: %{?prompt}, TickerNumber: %{?ticker_number}, SecurityGroup: %{devolutions_server.personal_connection.security_group}, Cost: %{?cost}, UserInfoID: %{devolutions_server.personal_connection.user_info_id}, SupportClose: %{_temp.personal_connection.support_close}, CloseMode: %{_temp.personal_connection.close_mode}, OpenMode: %{_temp.personal_connection.open_mode}, ClientApplication: %{devolutions_server.personal_connection.client_application}, ClientVersion: %{devolutions_server.personal_connection.client_version}, IsEmbedded: %{_temp.personal_connection.is_embedded}, RepositoryID: %{_temp.personal_connection.repository_id}, PamCredentialID: %{_temp.personal_connection.pam_credential_id}'
+  - set:
+      tag: set_personal_connection_message_sub_type
+      field: devolutions_server.personal_connection.message_sub_type
+      copy_from: _temp.personal_connection.message_sub_type
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_connection_name
+      field: devolutions_server.personal_connection.connection_name
+      copy_from: _temp.personal_connection.connection_name
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_connection_type_name
+      field: devolutions_server.personal_connection.connection_type_name
+      copy_from: _temp.personal_connection.connection_type_name
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_connection_id
+      field: devolutions_server.personal_connection.connection_id
+      copy_from: _temp.personal_connection.connection_id
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_connection_host_name
+      field: devolutions_server.personal_connection.connection_host_name
+      copy_from: _temp.personal_connection.connection_host_name
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_connection_user_name
+      field: devolutions_server.personal_connection.connection_user_name
+      copy_from: _temp.personal_connection.connection_user_name
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_support_close
+      field: devolutions_server.personal_connection.support_close
+      copy_from: _temp.personal_connection.support_close
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_close_mode
+      field: devolutions_server.personal_connection.close_mode
+      copy_from: _temp.personal_connection.close_mode
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_open_mode
+      field: devolutions_server.personal_connection.open_mode
+      copy_from: _temp.personal_connection.open_mode
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_is_embedded
+      field: devolutions_server.personal_connection.is_embedded
+      copy_from: _temp.personal_connection.is_embedded
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_repository_id
+      field: devolutions_server.personal_connection.repository_id
+      copy_from: _temp.personal_connection.repository_id
+      ignore_empty_value: true
+  - set:
+      tag: set_personal_connection_pam_credential_id
+      field: devolutions_server.personal_connection.pam_credential_id
+      copy_from: _temp.personal_connection.pam_credential_id
+      ignore_empty_value: true
+  - set:
+      tag: set_event_reason
+      field: event.reason
+      copy_from: devolutions_server.personal_connection.localized_message
+      ignore_empty_value: true
+  - set:
+      tag: set_event_action
+      field: event.action
+      copy_from: devolutions_server.personal_connection.message_type
+      ignore_empty_value: true
+  - lowercase:
+      tag: lowercase_event_action
+      field: event.action
+      ignore_missing: true
+  - gsub:
+      tag: gsub_event_action_non_word
+      field: event.action
+      pattern: '[^a-z0-9]+'
+      replacement: '-'
+      ignore_missing: true
+  - gsub:
+      tag: gsub_event_action_trim_dash
+      field: event.action
+      pattern: '(^-+|-+$)'
+      replacement: ''
+      ignore_missing: true
+  - set:
+      tag: set_event_outcome
+      field: event.outcome
+      value: success
+  - set:
+      tag: set_user_name
+      field: user.name
+      copy_from: devolutions_server.personal_connection.logged_user_name
+      ignore_empty_value: true
+  - set:
+      tag: set_user_email
+      field: user.email
+      copy_from: devolutions_server.personal_connection.logged_user_name
+      if: ctx.devolutions_server?.personal_connection?.logged_user_name instanceof String && ctx.devolutions_server.personal_connection.logged_user_name.contains('@')
+      ignore_empty_value: true
+  - set:
+      tag: set_user_target_name
+      field: user.target.name
+      copy_from: devolutions_server.personal_connection.user_name
+      if: ctx.devolutions_server?.personal_connection?.user_name != null && ctx.devolutions_server.personal_connection.user_name != ''
+      ignore_empty_value: true
+  - set:
+      tag: set_destination_user_name
+      field: destination.user.name
+      copy_from: devolutions_server.personal_connection.connection_user_name
+      if: ctx.devolutions_server?.personal_connection?.connection_user_name != null && ctx.devolutions_server.personal_connection.connection_user_name != ''
+      ignore_empty_value: true
+  - set:
+      tag: set_source_address
+      field: source.address
+      copy_from: devolutions_server.client.ip_list.0
+      if: ctx.devolutions_server?.client?.ip_list instanceof List && ctx.devolutions_server.client.ip_list.size() > 0
+      ignore_empty_value: true
+  - convert:
+      tag: convert_source_address_to_source_ip
+      field: source.address
+      target_field: source.ip
+      type: ip
+      ignore_missing: true
+      ignore_failure: true
+  - set:
+      tag: set_destination_address
+      field: destination.address
+      copy_from: devolutions_server.personal_connection.connection_host_name
+      if: ctx.devolutions_server?.personal_connection?.connection_host_name != null && ctx.devolutions_server.personal_connection.connection_host_name != ''
+      ignore_empty_value: true
+  - convert:
+      tag: convert_destination_address_to_destination_ip
+      field: destination.address
+      target_field: destination.ip
+      type: ip
+      ignore_missing: true
+      ignore_failure: true
+  - date:
+      tag: date_event_start
+      field: _temp.personal_connection.start_date_time
+      target_field: event.start
+      formats:
+        - dd/MM/yyyy HH:mm:ss
+      timezone: '{{{ event.timezone }}}'
+      if: ctx._temp?.personal_connection?.start_date_time != null && ctx._temp.personal_connection.start_date_time != '' && ctx.event?.timezone != null
+  - date:
+      tag: date_event_end
+      field: _temp.personal_connection.end_date_time
+      target_field: event.end
+      formats:
+        - dd/MM/yyyy HH:mm:ss
+      timezone: '{{{ event.timezone }}}'
+      if: ctx._temp?.personal_connection?.end_date_time != null && ctx._temp.personal_connection.end_date_time != '' && ctx.event?.timezone != null
+  - convert:
+      tag: convert_support_close
+      field: devolutions_server.personal_connection.support_close
+      type: boolean
+      if: ctx.devolutions_server?.personal_connection?.support_close != null && ctx.devolutions_server.personal_connection.support_close != ''
+      ignore_failure: true
+  - convert:
+      tag: convert_is_embedded
+      field: devolutions_server.personal_connection.is_embedded
+      type: boolean
+      if: ctx.devolutions_server?.personal_connection?.is_embedded != null && ctx.devolutions_server.personal_connection.is_embedded != ''
+      ignore_failure: true
+  - append:
+      tag: append_related_user_actor
+      field: related.user
+      value: '{{{user.name}}}'
+      if: ctx.user?.name != null
+      allow_duplicates: false
+  - append:
+      tag: append_related_user_target
+      field: related.user
+      value: '{{{user.target.name}}}'
+      if: ctx.user?.target?.name != null
+      allow_duplicates: false
+  - append:
+      tag: append_related_user_destination
+      field: related.user
+      value: '{{{destination.user.name}}}'
+      if: ctx.destination?.user?.name != null
+      allow_duplicates: false
+  - append:
+      tag: append_related_hosts_machine
+      field: related.hosts
+      value: '{{{devolutions_server.personal_connection.machine_name}}}'
+      if: ctx.devolutions_server?.personal_connection?.machine_name != null && ctx.devolutions_server.personal_connection.machine_name != ''
+      allow_duplicates: false
+  - append:
+      tag: append_related_hosts_destination
+      field: related.hosts
+      value: '{{{destination.address}}}'
+      if: ctx.destination?.address != null && ctx.destination?.ip == null
+      allow_duplicates: false
+  - append:
+      tag: append_related_ip_destination
+      field: related.ip
+      value: '{{{destination.ip}}}'
+      if: ctx.destination?.ip != null
+      allow_duplicates: false
+  - append:
+      tag: append_event_category_session
+      field: event.category
+      value: session
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Connection opened'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_start_connection
+      field: event.type
+      value: start
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Connection opened'
+      allow_duplicates: false
+  - append:
+      tag: append_event_category_process
+      field: event.category
+      value: process
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Macro/Script/Tool executed'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_start_process
+      field: event.type
+      value: start
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Macro/Script/Tool executed'
+      allow_duplicates: false
+  - append:
+      tag: append_event_category_configuration_creation
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Entry added'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_creation
+      field: event.type
+      value: creation
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Entry added'
+      allow_duplicates: false
+  - append:
+      tag: append_event_category_configuration_change
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Entry edited' || ctx.devolutions_server?.personal_connection?.message_type == "Edited entry's user-specific settings" || ctx.devolutions_server?.personal_connection?.message_type == 'Password changed'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_change
+      field: event.type
+      value: change
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Entry edited' || ctx.devolutions_server?.personal_connection?.message_type == "Edited entry's user-specific settings" || ctx.devolutions_server?.personal_connection?.message_type == 'Password changed'
+      allow_duplicates: false
+  - append:
+      tag: append_event_category_configuration_deletion
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Entry deleted'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_deletion
+      field: event.type
+      value: deletion
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Entry deleted'
+      allow_duplicates: false
+  - append:
+      tag: append_event_category_configuration_access
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Viewed entry' || ctx.devolutions_server?.personal_connection?.message_type == 'Username viewed' || ctx.devolutions_server?.personal_connection?.message_type == 'Password viewed' || ctx.devolutions_server?.personal_connection?.message_type == 'Domain viewed' || ctx.devolutions_server?.personal_connection?.message_type == 'Report opened'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_access
+      field: event.type
+      value: access
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Viewed entry' || ctx.devolutions_server?.personal_connection?.message_type == 'Username viewed' || ctx.devolutions_server?.personal_connection?.message_type == 'Password viewed' || ctx.devolutions_server?.personal_connection?.message_type == 'Domain viewed' || ctx.devolutions_server?.personal_connection?.message_type == 'Report opened'
+      allow_duplicates: false
+  - append:
+      tag: append_event_category_configuration_info
+      field: event.category
+      value: configuration
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Information'
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_info
+      field: event.type
+      value: info
+      if: ctx.devolutions_server?.personal_connection?.message_type == 'Information'
+      allow_duplicates: false
+  - append:
+      tag: append_event_category_default
+      field: event.category
+      value: configuration
+      if: ctx.event?.category == null
+      allow_duplicates: false
+  - append:
+      tag: append_event_type_default
+      field: event.type
+      value: info
+      if: ctx.event?.type == null
+      allow_duplicates: false
+
+on_failure:
+  - set:
+      field: event.kind
+      value: pipeline_error
+  - append:
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{#_ingest.on_failure_processor_tag}}with tag '{{{ _ingest.on_failure_processor_tag }}}' {{/_ingest.on_failure_processor_tag}}in pipeline '{{{ _ingest.pipeline }}}'
+        failed with message '{{{ _ingest.on_failure_message }}}'
+  - append:
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false

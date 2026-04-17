@@ -1,0 +1,1336 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-04-15T09:39:12.127Z",
+            "destination": {
+                "address": "172.17.52.20",
+                "ip": "172.17.52.20",
+                "user": {
+                    "name": "username"
+                }
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_host_name": "172.17.52.20",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "Server2",
+                    "connection_type_name": "SAP Frontend Server (SAP GUI)",
+                    "connection_user_name": "username",
+                    "group_name": "CORP\\Server\\Prod",
+                    "is_embedded": false,
+                    "localized_message": "Session active",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Connection opened",
+                    "open_mode": "0",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": true,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "connection-opened",
+                "category": [
+                    "session"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:39:12.127290+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Session active - MessageType: Connection opened, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: Server2, ConnectionTypeName: SAP Frontend Server (SAP GUI), ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: 172.17.52.20, ConnectionUserName: username, StartDateTime: 15/04/2026 11:39:12, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: True, CloseMode: , OpenMode: 0, ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: False, RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Session active",
+                "severity": 5,
+                "start": "2026-04-15T11:39:12.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "start"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253",
+                    "172.17.52.20"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username",
+                    "username"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:36:33.358Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "Vault Passwords",
+                    "connection_type_name": "HashiCorp Vault",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Utilisé par 'server.us.cloud.corp.com' [Session]",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Information",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "information",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:36:33.358382+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Utilisé par 'server.us.cloud.corp.com' [Session] - MessageType: Information, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: Vault Passwords, ConnectionTypeName: HashiCorp Vault, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: , ConnectionUserName: , StartDateTime: 15/04/2026 11:36:33, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Utilisé par 'server.us.cloud.corp.com' [Session]",
+                "severity": 5,
+                "start": "2026-04-15T11:36:33.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "info"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:36:23.580Z",
+            "destination": {
+                "user": {
+                    "name": "username"
+                }
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "[DOMAIN ABC] username",
+                    "connection_type_name": "Nom d’utilisateur / mot de passe",
+                    "connection_user_name": "username",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Utilisé par 'server.us.cloud.corp.com' [Session]",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Information",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "information",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:36:23.580435+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Utilisé par 'server.us.cloud.corp.com' [Session] - MessageType: Information, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: [DOMAIN ABC] username, ConnectionTypeName: Nom d’utilisateur / mot de passe, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: , ConnectionUserName: username, StartDateTime: 15/04/2026 11:36:23, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Utilisé par 'server.us.cloud.corp.com' [Session]",
+                "severity": 5,
+                "start": "2026-04-15T11:36:23.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "info"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username",
+                    "username"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:35:37.155Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Rapport ouvert - Rapport des journaux d’activités",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "192.168.1.253",
+                    "message_sub_type": "Shared connection logs",
+                    "message_type": "Report opened",
+                    "security_group": "na",
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "username@services.corp.com"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "report-opened",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:35:37.155077+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Rapport ouvert - Rapport des journaux d’activités - MessageType: Report opened, MessageSubType: Shared connection logs, UserName: username@services.corp.com, MachineName: 192.168.1.253, ConnectionName: , ConnectionTypeName: , ConnectionID: , ConnectionHostName: , ConnectionUserName: , StartDateTime: 15/04/2026 11:35:37, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: , CloseMode: , OpenMode: , ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: , RepositoryID: , PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Rapport ouvert - Rapport des journaux d’activités",
+                "severity": 5,
+                "start": "2026-04-15T11:35:37.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "access"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "192.168.1.253"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "username@services.corp.com"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:34:43.371Z",
+            "destination": {
+                "address": "it-server.us.cloud.corp.com",
+                "user": {
+                    "name": "administrator"
+                }
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_host_name": "it-server.us.cloud.corp.com",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "ServerNameRDP",
+                    "connection_type_name": "RDP (Microsoft Remote Desktop Protocol)",
+                    "connection_user_name": "administrator",
+                    "group_name": "CORP\\Server\\Prod",
+                    "is_embedded": false,
+                    "localized_message": "Mot de passe copié dans le presse-papiers",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Password viewed",
+                    "open_mode": "0",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "password-viewed",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:34:43.371010+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Mot de passe copié dans le presse-papiers - MessageType: Password viewed, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: ServerNameRDP, ConnectionTypeName: RDP (Microsoft Remote Desktop Protocol), ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: it-server.us.cloud.corp.com, ConnectionUserName: administrator, StartDateTime: 15/04/2026 11:34:43, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: 0, ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: False, RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Mot de passe copié dans le presse-papiers",
+                "severity": 5,
+                "start": "2026-04-15T11:34:43.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "access"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName",
+                    "it-server.us.cloud.corp.com"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username",
+                    "administrator"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:34:43.286Z",
+            "destination": {
+                "address": "it-server.us.cloud.corp.com",
+                "user": {
+                    "name": "administrator"
+                }
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_host_name": "it-server.us.cloud.corp.com",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "ServerNameRDP",
+                    "connection_type_name": "RDP (Microsoft Remote Desktop Protocol)",
+                    "connection_user_name": "administrator",
+                    "group_name": "CORP\\Server\\Prod",
+                    "is_embedded": false,
+                    "localized_message": "Nom d’utilisateur copié dans le presse-papiers",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Username viewed",
+                    "open_mode": "0",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "username-viewed",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:34:43.286334+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Nom d’utilisateur copié dans le presse-papiers - MessageType: Username viewed, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: ServerNameRDP, ConnectionTypeName: RDP (Microsoft Remote Desktop Protocol), ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: it-server.us.cloud.corp.com, ConnectionUserName: administrator, StartDateTime: 15/04/2026 11:34:43, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: 0, ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: False, RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Nom d’utilisateur copié dans le presse-papiers",
+                "severity": 5,
+                "start": "2026-04-15T11:34:43.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "access"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName",
+                    "it-server.us.cloud.corp.com"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username",
+                    "administrator"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:17:13.420Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "Vault Passwords",
+                    "connection_type_name": "HashiCorp Vault",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Vision de l'entrée",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Viewed entry",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "viewed-entry",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:17:13.420689+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Vision de l'entrée - MessageType: Viewed entry, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: Vault Passwords, ConnectionTypeName: HashiCorp Vault, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: , ConnectionUserName: , StartDateTime: 15/04/2026 11:17:13, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Vision de l'entrée",
+                "severity": 5,
+                "start": "2026-04-15T11:17:13.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "access"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:16:33.213Z",
+            "destination": {
+                "address": "it-server.us.cloud.corp.com",
+                "user": {
+                    "name": "username"
+                }
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "Cli",
+                    "client_version": "2025.3.8.0",
+                    "connection_host_name": "it-server.us.cloud.corp.com",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "it-server.us.cloud.corp.com",
+                    "connection_type_name": "RDPConfigured",
+                    "connection_user_name": "username",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Entrée mise à jour",
+                    "logged_user_name": "Powershell - Forge (Application)",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Entry edited",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "cpt-svc-awx"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "entry-edited",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:16:33.213903+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Entrée mise à jour - MessageType: Entry edited, MessageSubType: , UserName: cpt-svc-awx, MachineName: ServerName, ConnectionName: it-server.us.cloud.corp.com, ConnectionTypeName: RDPConfigured, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: it-server.us.cloud.corp.com, ConnectionUserName: username, StartDateTime: 15/04/2026 11:16:33, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: Powershell - Forge (Application), LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: Cli, ClientVersion: 2025.3.8.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Entrée mise à jour",
+                "severity": 5,
+                "start": "2026-04-15T11:16:33.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName",
+                    "it-server.us.cloud.corp.com"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "Powershell - Forge (Application)",
+                    "cpt-svc-awx",
+                    "username"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "name": "Powershell - Forge (Application)",
+                "target": {
+                    "name": "cpt-svc-awx"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:13:46.542Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "Winscp - SCP - [RDS]",
+                    "connection_type_name": "Ligne de commande",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Macro/Script/Outil exécuté",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Macro/Script/Tool executed",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "macro-script-tool-executed",
+                "category": [
+                    "process"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:13:46.542562+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Macro/Script/Outil exécuté - MessageType: Macro/Script/Tool executed, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: Winscp - SCP - [RDS], ConnectionTypeName: Ligne de commande, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: , ConnectionUserName: , StartDateTime: 15/04/2026 11:13:46, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Macro/Script/Outil exécuté",
+                "severity": 5,
+                "start": "2026-04-15T11:13:46.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "start"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T09:07:01.507Z",
+            "destination": {
+                "user": {
+                    "name": "username"
+                }
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "[LOCAL] username",
+                    "connection_type_name": "Nom d’utilisateur / mot de passe",
+                    "connection_user_name": "username",
+                    "group_name": "CORP\\Server\\Prod",
+                    "is_embedded": false,
+                    "localized_message": "Domaine copié dans le presse-papiers",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Domain viewed",
+                    "open_mode": "0",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "domain-viewed",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:07:01.507588+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Domaine copié dans le presse-papiers - MessageType: Domain viewed, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: [LOCAL] username, ConnectionTypeName: Nom d’utilisateur / mot de passe, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: , ConnectionUserName: username, StartDateTime: 15/04/2026 11:07:01, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: 0, ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: False, RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Domaine copié dans le presse-papiers",
+                "severity": 5,
+                "start": "2026-04-15T11:07:01.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "access"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username",
+                    "username"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T08:39:44.464Z",
+            "destination": {
+                "address": "it-server.us.cloud.corp.com"
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "Cli",
+                    "client_version": "2025.3.8.0",
+                    "connection_host_name": "it-server.us.cloud.corp.com",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "it-server.us.cloud.corp.com",
+                    "connection_type_name": "RDPConfigured",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Entrée créée",
+                    "logged_user_name": "Powershell - Forge (Application)",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Entry added",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "cpt-svc-awx"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "entry-added",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T10:39:44.464511+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Entrée créée - MessageType: Entry added, MessageSubType: , UserName: cpt-svc-awx, MachineName: ServerName, ConnectionName: it-server.us.cloud.corp.com, ConnectionTypeName: RDPConfigured, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: it-server.us.cloud.corp.com, ConnectionUserName: , StartDateTime: 15/04/2026 10:39:44, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: Powershell - Forge (Application), LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: Cli, ClientVersion: 2025.3.8.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Entrée créée",
+                "severity": 5,
+                "start": "2026-04-15T10:39:44.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "creation"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName",
+                    "it-server.us.cloud.corp.com"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "Powershell - Forge (Application)",
+                    "cpt-svc-awx"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "name": "Powershell - Forge (Application)",
+                "target": {
+                    "name": "cpt-svc-awx"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T08:23:59.335Z",
+            "destination": {
+                "user": {
+                    "name": "corp"
+                }
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "Q01 - 100 - corp",
+                    "connection_type_name": "Nom d’utilisateur / mot de passe",
+                    "connection_user_name": "corp",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Mot de passe changé",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Password changed",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "password-changed",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T10:23:59.335245+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Mot de passe changé - MessageType: Password changed, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: Q01 - 100 - corp, ConnectionTypeName: Nom d’utilisateur / mot de passe, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: , ConnectionUserName: corp, StartDateTime: 15/04/2026 10:23:59, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Mot de passe changé",
+                "severity": 5,
+                "start": "2026-04-15T10:23:59.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username",
+                    "corp"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T07:55:44.237Z",
+            "destination": {
+                "address": "it-server.us.cloud.corp.com"
+            },
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_host_name": "it-server.us.cloud.corp.com",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "it-server.us.cloud.corp.com",
+                    "connection_type_name": "RDP (Microsoft Remote Desktop Protocol)",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Les paramètres spécifiques à l'utilisateur de l'entrée ont été modifiés",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "ServerName",
+                    "message_type": "Edited entry's user-specific settings",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "DOMAIN\\username"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "edited-entry-s-user-specific-settings",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T09:55:44.237533+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Les paramètres spécifiques à l'utilisateur de l'entrée ont été modifiés - MessageType: Edited entry's user-specific settings, MessageSubType: , UserName: DOMAIN\\username, MachineName: ServerName, ConnectionName: it-server.us.cloud.corp.com, ConnectionTypeName: RDP (Microsoft Remote Desktop Protocol), ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: it-server.us.cloud.corp.com, ConnectionUserName: , StartDateTime: 15/04/2026 09:55:44, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Les paramètres spécifiques à l'utilisateur de l'entrée ont été modifiés",
+                "severity": 5,
+                "start": "2026-04-15T09:55:44.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "ServerName",
+                    "it-server.us.cloud.corp.com"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com",
+                    "DOMAIN\\username"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "DOMAIN\\username"
+                }
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T07:40:11.170Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "personal_connection": {
+                    "client_application": "RDM",
+                    "client_version": "2025.3.22.0",
+                    "connection_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "connection_name": "DOMAIN ServerName - PEM Inter",
+                    "connection_type_name": "Document",
+                    "group_name": "CORP\\Server\\Prod",
+                    "localized_message": "Entrée supprimée",
+                    "logged_user_name": "username@services.corp.com",
+                    "login_history_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "machine_name": "192.168.1.253",
+                    "message_type": "Entry deleted",
+                    "repository_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "security_group": "na",
+                    "support_close": false,
+                    "user_info_id": "94dd733b-2166-44b4-a059-e12116ba58ee",
+                    "user_name": "username@services.corp.com"
+                },
+                "service": "PersonalConnection"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "entry-deleted",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T09:40:11.170608+02:00 192.168.1.241 Devolutions Server 13348 PersonalConnection - [5] Entrée supprimée - MessageType: Entry deleted, MessageSubType: , UserName: username@services.corp.com, MachineName: 192.168.1.253, ConnectionName: DOMAIN ServerName - PEM Inter, ConnectionTypeName: Document, ConnectionID: 94dd733b-2166-44b4-a059-e12116ba58ee, ConnectionHostName: , ConnectionUserName: , StartDateTime: 15/04/2026 09:40:11, StartDateTimeUTC: , EndDateTime: , EndDateTimeUTC: , GroupName: CORP\\Server\\Prod, Comment: , LoggedUserName: username@services.corp.com, LoginHistoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, Prompt: , TickerNumber: , SecurityGroup: na, Cost: , UserInfoID: 94dd733b-2166-44b4-a059-e12116ba58ee, SupportClose: False, CloseMode: , OpenMode: , ClientApplication: RDM, ClientVersion: 2025.3.22.0, IsEmbedded: , RepositoryID: 94dd733b-2166-44b4-a059-e12116ba58ee, PamCredentialID:  [ClientIP: 192.168.1.253]",
+                "outcome": "success",
+                "reason": "Entrée supprimée",
+                "severity": 5,
+                "start": "2026-04-15T09:40:11.000+02:00",
+                "timezone": "+02:00",
+                "type": [
+                    "deletion"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "hosts": [
+                    "192.168.1.253"
+                ],
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ],
+                "user": [
+                    "username@services.corp.com"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            },
+            "user": {
+                "email": "username@services.corp.com",
+                "name": "username@services.corp.com",
+                "target": {
+                    "name": "username@services.corp.com"
+                }
+            }
+        }
+    ]
+}

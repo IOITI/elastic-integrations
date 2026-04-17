@@ -1,0 +1,480 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-04-15T09:36:36.434Z",
+            "devolutions_server": {
+                "application": "dvls.corp.local",
+                "client": {
+                    "ip_list": [
+                        "::1",
+                        "192.168.1.241"
+                    ]
+                },
+                "service": "Syslog heartbeat"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "syslog-heartbeat",
+                "kind": "event",
+                "original": "<14>1 2026-04-15T11:36:36.434688+02:00 192.168.1.241 dvls.corp.local 16496 Syslog heartbeat - [8] Syslog heartbeat [ClientIP: ::1,192.168.1.241]",
+                "severity": 8,
+                "timezone": "+02:00",
+                "type": [
+                    "info"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "dvls.corp.local",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 16496
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "::1"
+                ]
+            }
+        },
+        {
+            "@timestamp": "2026-04-15T04:00:08.410Z",
+            "devolutions_server": {
+                "admin": {
+                    "cleanup": {
+                        "backup_log": {
+                            "archived_entries": 0,
+                            "purged_archives": 0
+                        },
+                        "connection_log": {
+                            "archived_entries": 3550,
+                            "purged_archives": 0
+                        },
+                        "log_message": {
+                            "archived_entries": 0,
+                            "purged_archives": 0
+                        },
+                        "login_attempt": {
+                            "archived_entries": 0,
+                            "purged_archives": 0
+                        },
+                        "login_history": {
+                            "archived_entries": 0,
+                            "purged_archives": 0
+                        },
+                        "pam_log": {
+                            "archived_entries": 0,
+                            "purged_archives": 0
+                        },
+                        "started_by": "Scheduled Task",
+                        "user_info_history": {
+                            "archived_entries": 11,
+                            "purged_archives": 0
+                        }
+                    }
+                },
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "::1",
+                        "192.168.1.241"
+                    ]
+                },
+                "service": "Default"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "log-cleanup",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T06:00:08.410630+02:00 192.168.1.241 Devolutions Server 16496 Default - [4] Log cleanup results - Log cleanup started by Scheduled Task:Results: BackupLog: 0 Archived entries, 0 Purged archives, ConnectionLog: 3550 Archived entries, 0 Purged archives, LoginAttempt: 0 Archived entries, 0 Purged archives, LoginHistory: 0 Archived entries, 0 Purged archives, LogMessage: 0 Archived entries, 0 Purged archives, PamLog: 0 Archived entries, 0 Purged archives, UserInfoHistory: 11 Archived entries, 0 Purged archives,  [ClientIP: ::1,192.168.1.241]",
+                "outcome": "success",
+                "severity": 4,
+                "timezone": "+02:00",
+                "type": [
+                    "info"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 16496
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "::1"
+                ]
+            }
+        },
+        {
+            "@timestamp": "2026-04-14T23:00:43.138Z",
+            "devolutions_server": {
+                "admin": {
+                    "migration_name": "PamSystemConnectionStringAccountSynchronizer"
+                },
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "127.0.0.1"
+                    ]
+                },
+                "service": "UpgradeServer"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "migration-completed",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T01:00:43.138530+02:00 192.168.1.242 Devolutions Server 11608 UpgradeServer - [4] Migration completed (PamSystemConnectionStringAccountSynchronizer) -  [ClientIP: 127.0.0.1]",
+                "outcome": "success",
+                "severity": 4,
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.242"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 11608
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.242",
+                    "127.0.0.1"
+                ]
+            },
+            "source": {
+                "address": "127.0.0.1",
+                "ip": "127.0.0.1"
+            }
+        },
+        {
+            "@timestamp": "2026-04-14T23:00:34.680Z",
+            "devolutions_server": {
+                "admin": {
+                    "migration_name": "SystemSubscriptionSynchronizer"
+                },
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "127.0.0.1"
+                    ]
+                },
+                "service": "UpgradeServer"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "migration-completed",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T01:00:34.680803+02:00 192.168.1.242 Devolutions Server 11608 UpgradeServer - [4] Migration completed (SystemSubscriptionSynchronizer) -  [ClientIP: 127.0.0.1]",
+                "outcome": "success",
+                "severity": 4,
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.242"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 11608
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.242",
+                    "127.0.0.1"
+                ]
+            },
+            "source": {
+                "address": "127.0.0.1",
+                "ip": "127.0.0.1"
+            }
+        },
+        {
+            "@timestamp": "2026-04-14T23:00:06.459Z",
+            "devolutions_server": {
+                "admin": {
+                    "migration_name": "AADRemoveAppSettings"
+                },
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "127.0.0.1"
+                    ]
+                },
+                "service": "UpgradeServer"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "migration-completed",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T01:00:06.459526+02:00 192.168.1.241 Devolutions Server 13348 UpgradeServer - [4] Migration completed (AADRemoveAppSettings) -  [ClientIP: 127.0.0.1]",
+                "outcome": "success",
+                "severity": 4,
+                "timezone": "+02:00",
+                "type": [
+                    "change"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13348
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "127.0.0.1"
+                ]
+            },
+            "source": {
+                "address": "127.0.0.1",
+                "ip": "127.0.0.1"
+            }
+        },
+        {
+            "@timestamp": "2026-04-14T23:00:04.437Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "127.0.0.1"
+                    ]
+                },
+                "service": "Default"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "logfile-name",
+                "category": [
+                    "configuration"
+                ],
+                "kind": "event",
+                "original": "<14>1 2026-04-15T01:00:04.437982+02:00 192.168.1.242 Devolutions Server 11608 Default - [4] LogFileName - C:\\inetpub\\wwwroot\\dvls\\App_Data\\DPS_Main.log [ClientIP: 127.0.0.1]",
+                "severity": 4,
+                "timezone": "+02:00",
+                "type": [
+                    "info"
+                ]
+            },
+            "file": {
+                "path": "C:\\inetpub\\wwwroot\\dvls\\App_Data\\DPS_Main.log"
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.242"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 11608
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.242",
+                    "127.0.0.1"
+                ]
+            },
+            "source": {
+                "address": "127.0.0.1",
+                "ip": "127.0.0.1"
+            }
+        },
+        {
+            "@timestamp": "2026-04-14T23:00:04.432Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "127.0.0.1"
+                    ]
+                },
+                "service": "Default"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "default",
+                "kind": "event",
+                "original": "<14>1 2026-04-15T01:00:04.432603+02:00 192.168.1.242 Devolutions Server 11608 Default - [4] Application_Start -  [ClientIP: 127.0.0.1]",
+                "severity": 4,
+                "timezone": "+02:00",
+                "type": [
+                    "info"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 14,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.242"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 11608
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.242",
+                    "127.0.0.1"
+                ]
+            },
+            "source": {
+                "address": "127.0.0.1",
+                "ip": "127.0.0.1"
+            }
+        },
+        {
+            "@timestamp": "2026-04-02T08:51:59.725Z",
+            "devolutions_server": {
+                "application": "Devolutions Server",
+                "client": {
+                    "ip_list": [
+                        "192.168.1.253"
+                    ]
+                },
+                "service": "SessionManagement"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "format-exception",
+                "kind": "event",
+                "original": "<11>1 2026-04-02T10:51:59.725994+02:00  192.168.1.241 Devolutions Server 13148 SessionManagement - [4] FormatException - The input string '' was not in a correct format. - FormatException - The input string '' was not in a correct format.     at System.Number.ThrowFormatException[TChar](ReadOnlySpan`1 value)    at System.Xml.XmlConvert.ToInt32(String s)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadWebConnectionProperty(XmlReader reader, WebConnection& result, List`1 unknownProperties)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadWebConnection(XmlReader reader, Boolean returnNullOnEmpty)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadConnectionProperty(XmlReader reader, Connection& result, List`1 unknownProperties)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadConnection(XmlReader reader, Boolean returnNullOnEmpty)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadConnection(String xml)    at Devolutions.RemoteDesktopManager.Managers.SerializationManager.LoadObjectFromString[T](String str, Boolean createAnInstanceIfNotExists)    at Devolutions.Server.ConnectionManager.DeserializeConnection(ConnectionInfoEntity connectionInfo, Action`1 errorAction, Boolean getACopy)  ---  Failed to deserialize connection. Data is empty or has bad encryption. Details: ConnectionName: mail.us.cloud.corp.com, ConnectionID: 8d57d63f-9c9d-4abc-91db-20c3db0e5348, SecurityProvider: DefaultData: <?xml version=\"1.0\"?><Connecti  [ClientIP:  192.168.1.253]",
+                "outcome": "failure",
+                "reason": "The input string '' was not in a correct format. - FormatException - The input string '' was not in a correct format.     at System.Number.ThrowFormatException[TChar](ReadOnlySpan`1 value)    at System.Xml.XmlConvert.ToInt32(String s)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadWebConnectionProperty(XmlReader reader, WebConnection& result, List`1 unknownProperties)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadWebConnection(XmlReader reader, Boolean returnNullOnEmpty)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadConnectionProperty(XmlReader reader, Connection& result, List`1 unknownProperties)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadConnection(XmlReader reader, Boolean returnNullOnEmpty)    at Devolutions.RemoteDesktopManager.Business.ConnectionLoaderManager.LoadConnection(String xml)    at Devolutions.RemoteDesktopManager.Managers.SerializationManager.LoadObjectFromString[T](String str, Boolean createAnInstanceIfNotExists)    at Devolutions.Server.ConnectionManager.DeserializeConnection(ConnectionInfoEntity connectionInfo, Action`1 errorAction, Boolean getACopy)  ---  Failed to deserialize connection. Data is empty or has bad encryption. Details: ConnectionName: mail.us.cloud.corp.com, ConnectionID: 8d57d63f-9c9d-4abc-91db-20c3db0e5348, SecurityProvider: DefaultData: <?xml version=\"1.0\"?><Connecti ",
+                "severity": 4,
+                "timezone": "+02:00",
+                "type": [
+                    "error"
+                ]
+            },
+            "log": {
+                "syslog": {
+                    "priority": 11,
+                    "version": "1"
+                }
+            },
+            "observer": {
+                "ip": [
+                    "192.168.1.241"
+                ],
+                "name": "Devolutions Server",
+                "product": "Devolutions Server",
+                "vendor": "Devolutions"
+            },
+            "process": {
+                "pid": 13148
+            },
+            "related": {
+                "ip": [
+                    "192.168.1.241",
+                    "192.168.1.253"
+                ]
+            },
+            "source": {
+                "address": "192.168.1.253",
+                "ip": "192.168.1.253"
+            }
+        }
+    ]
+}
