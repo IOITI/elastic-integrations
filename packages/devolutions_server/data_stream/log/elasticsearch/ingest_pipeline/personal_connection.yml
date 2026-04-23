@@ -4,67 +4,12 @@ processors:
   - dissect:
       tag: dissect_personal_connection_message
       field: _tmp_message
-      pattern: '%{devolutions_server.personal_connection.localized_message} - MessageType: %{devolutions_server.personal_connection.message_type}, MessageSubType: %{_temp.personal_connection.message_sub_type}, UserName: %{devolutions_server.personal_connection.user_name}, MachineName: %{devolutions_server.personal_connection.machine_name}, ConnectionName: %{_temp.personal_connection.connection_name}, ConnectionTypeName: %{_temp.personal_connection.connection_type_name}, ConnectionID: %{_temp.personal_connection.connection_id}, ConnectionHostName: %{_temp.personal_connection.connection_host_name}, ConnectionUserName: %{_temp.personal_connection.connection_user_name}, StartDateTime: %{_temp.personal_connection.start_date_time}, StartDateTimeUTC: %{?start_date_time_utc}, EndDateTime: %{_temp.personal_connection.end_date_time}, EndDateTimeUTC: %{?end_date_time_utc}, GroupName: %{devolutions_server.personal_connection.group_name}, Comment: %{?comment}, LoggedUserName: %{devolutions_server.personal_connection.logged_user_name}, LoginHistoryID: %{devolutions_server.personal_connection.login_history_id}, Prompt: %{?prompt}, TickerNumber: %{?ticker_number}, SecurityGroup: %{devolutions_server.personal_connection.security_group}, Cost: %{?cost}, UserInfoID: %{devolutions_server.personal_connection.user_info_id}, SupportClose: %{_temp.personal_connection.support_close}, CloseMode: %{_temp.personal_connection.close_mode}, OpenMode: %{_temp.personal_connection.open_mode}, ClientApplication: %{devolutions_server.personal_connection.client_application}, ClientVersion: %{devolutions_server.personal_connection.client_version}, IsEmbedded: %{_temp.personal_connection.is_embedded}, RepositoryID: %{_temp.personal_connection.repository_id}, PamCredentialID: %{_temp.personal_connection.pam_credential_id}'
-  - set:
-      tag: set_personal_connection_message_sub_type
-      field: devolutions_server.personal_connection.message_sub_type
-      copy_from: _temp.personal_connection.message_sub_type
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_connection_name
-      field: devolutions_server.personal_connection.connection_name
-      copy_from: _temp.personal_connection.connection_name
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_connection_type_name
-      field: devolutions_server.personal_connection.connection_type_name
-      copy_from: _temp.personal_connection.connection_type_name
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_connection_id
-      field: devolutions_server.personal_connection.connection_id
-      copy_from: _temp.personal_connection.connection_id
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_connection_host_name
-      field: devolutions_server.personal_connection.connection_host_name
-      copy_from: _temp.personal_connection.connection_host_name
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_connection_user_name
-      field: devolutions_server.personal_connection.connection_user_name
-      copy_from: _temp.personal_connection.connection_user_name
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_support_close
-      field: devolutions_server.personal_connection.support_close
-      copy_from: _temp.personal_connection.support_close
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_close_mode
-      field: devolutions_server.personal_connection.close_mode
-      copy_from: _temp.personal_connection.close_mode
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_open_mode
-      field: devolutions_server.personal_connection.open_mode
-      copy_from: _temp.personal_connection.open_mode
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_is_embedded
-      field: devolutions_server.personal_connection.is_embedded
-      copy_from: _temp.personal_connection.is_embedded
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_repository_id
-      field: devolutions_server.personal_connection.repository_id
-      copy_from: _temp.personal_connection.repository_id
-      ignore_empty_value: true
-  - set:
-      tag: set_personal_connection_pam_credential_id
-      field: devolutions_server.personal_connection.pam_credential_id
-      copy_from: _temp.personal_connection.pam_credential_id
-      ignore_empty_value: true
+      pattern: '%{devolutions_server.personal_connection.localized_message} - MessageType: %{devolutions_server.personal_connection.message_type}, MessageSubType: %{personal_connection.message_sub_type}, UserName: %{devolutions_server.personal_connection.user_name}, MachineName: %{devolutions_server.personal_connection.machine_name}, ConnectionName: %{personal_connection.connection_name}, ConnectionTypeName: %{personal_connection.connection_type_name}, ConnectionID: %{personal_connection.connection_id}, ConnectionHostName: %{personal_connection.connection_host_name}, ConnectionUserName: %{personal_connection.connection_user_name}, StartDateTime: %{personal_connection.start_date_time}, StartDateTimeUTC: %{?start_date_time_utc}, EndDateTime: %{personal_connection.end_date_time}, EndDateTimeUTC: %{?end_date_time_utc}, GroupName: %{devolutions_server.personal_connection.group_name}, Comment: %{?comment}, LoggedUserName: %{devolutions_server.personal_connection.logged_user_name}, LoginHistoryID: %{devolutions_server.personal_connection.login_history_id}, Prompt: %{?prompt}, TickerNumber: %{?ticker_number}, SecurityGroup: %{devolutions_server.personal_connection.security_group}, Cost: %{?cost}, UserInfoID: %{devolutions_server.personal_connection.user_info_id}, SupportClose: %{personal_connection.support_close}, CloseMode: %{personal_connection.close_mode}, OpenMode: %{personal_connection.open_mode}, ClientApplication: %{devolutions_server.personal_connection.client_application}, ClientVersion: %{devolutions_server.personal_connection.client_version}, IsEmbedded: %{personal_connection.is_embedded}, RepositoryID: %{personal_connection.repository_id}, PamCredentialID: %{personal_connection.pam_credential_id}'
+  - script:
+      description: Remove all empty values from personal_connection
+      lang: painless
+      source: ctx.devolutions_server?.personal_connection?.entrySet().removeIf(entry -> [null, "", "-"].contains(entry.getValue()))
+      if: ctx.devolutions_server?.personal_connection != null
   - set:
       tag: set_event_reason
       field: event.reason
@@ -146,20 +91,20 @@ processors:
       ignore_failure: true
   - date:
       tag: date_event_start
-      field: _temp.personal_connection.start_date_time
+      field: personal_connection.start_date_time
       target_field: event.start
       formats:
         - dd/MM/yyyy HH:mm:ss
       timezone: '{{{ event.timezone }}}'
-      if: ctx._temp?.personal_connection?.start_date_time != null && ctx._temp.personal_connection.start_date_time != '' && ctx.event?.timezone != null
+      if: ctx._temp?.personal_connection?.start_date_time != null && ctx.personal_connection.start_date_time != '' && ctx.event?.timezone != null
   - date:
       tag: date_event_end
-      field: _temp.personal_connection.end_date_time
+      field: personal_connection.end_date_time
       target_field: event.end
       formats:
         - dd/MM/yyyy HH:mm:ss
       timezone: '{{{ event.timezone }}}'
-      if: ctx._temp?.personal_connection?.end_date_time != null && ctx._temp.personal_connection.end_date_time != '' && ctx.event?.timezone != null
+      if: ctx._temp?.personal_connection?.end_date_time != null && ctx.personal_connection.end_date_time != '' && ctx.event?.timezone != null
   - convert:
       tag: convert_support_close
       field: devolutions_server.personal_connection.support_close
