@@ -1,6 +1,6 @@
 name: devolutions_server
 title: Devolutions Server
-version: "0.1.0"
+version: "0.1.1"
 description: Collect logs from Devolutions Server with Elastic Agent.
 type: integration
 icons:
@@ -23,6 +23,9 @@ policy_templates:
       - type: tcp
         title: "Collect Devolutions Server logs (input: tcp)"
         description: "Collecting logs from Devolutions Server instances (input: tcp)"
+      - type: winlog
+        title: "Collect Devolutions Server logs (input: Windows Event Log)"
+        description: "Collecting logs from Devolutions Server instances (input: Windows Event Log)"
 owner:
   github: elastic/integration-experience
   type: community
