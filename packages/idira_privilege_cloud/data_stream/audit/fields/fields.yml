@@ -1,0 +1,102 @@
+- name: idira_privilege_cloud
+  type: group
+  fields:
+    - name: audit
+      type: group
+      description: Fields from the Idira Audit Export to SIEM API audit record.
+      fields:
+        - name: access_method
+          type: keyword
+          description: Service or access method that produced the activity.
+        - name: account_id
+          type: keyword
+          description: ID of the privileged account.
+        - name: account_name
+          type: keyword
+          description: Name of the privileged account.
+        - name: action_type
+          type: keyword
+          description: High-level type of the activity, for example Login, Retrieve or Create.
+        - name: application_code
+          type: keyword
+          description: Code of the service that produced the record. PAM is Privilege Cloud.
+        - name: arrival_timestamp
+          type: date
+          description: Time the record arrived in the Audit service.
+        - name: audit_type
+          type: keyword
+          description: Status or type of the activity, for example Info or Failure.
+        - name: checksum
+          type: keyword
+          description: Checksum of the audit record.
+        - name: cloud_assets
+          type: keyword
+          description: Cloud resource identifiers or names.
+        - name: cloud_identities
+          type: keyword
+          description: Cloud identities.
+        - name: cloud_provider
+          type: keyword
+          description: Cloud provider, for example aws, azure or gcp.
+        - name: cloud_roles
+          type: keyword
+          description: Cloud roles.
+        - name: cloud_workspaces
+          type: keyword
+          description: Cloud workspaces.
+        - name: cloud_workspaces_and_roles
+          type: group
+          description: Cloud workspaces and the roles used in each.
+          fields:
+            - name: name
+              type: keyword
+              description: Name of the cloud workspace.
+            - name: roles
+              type: keyword
+              description: Roles in the cloud workspace.
+        - name: command
+          type: keyword
+          description: Command that triggered the activity.
+        - name: component
+          type: keyword
+          description: Service component that produced the activity.
+        - name: correlation_id
+          type: keyword
+          description: ID that correlates related audit records.
+        - name: custom_data
+          type: flattened
+          description: Service-specific dynamic data of the activity.
+        - name: custom_event_data
+          type: flattened
+          description: >-
+            Service-specific dynamic data of the activity. The API returns it as a list of title and value pairs; it is stored as an object keyed by title, for example `Target Ip`. A list with an untitled item is stored as it is.
+        - name: identity_type
+          type: keyword
+          description: Type of identity that performed the activity, for example HUMAN, NON_HUMAN or AI_GENERATED.
+        - name: safe
+          type: keyword
+          description: Name of the Safe.
+        - name: service_name
+          type: keyword
+          description: Display name of the service that produced the record.
+        - name: session_id
+          type: keyword
+          description: ID of the session associated with the activity.
+        - name: source
+          type: keyword
+          description: Source of the activity when it is not an IP address. IP addresses are stored in `source.ip`.
+        - name: target
+          type: keyword
+          description: Target of the activity, an IP address, host name or other identifier.
+        - name: target_account
+          type: keyword
+          description: Account name on the target machine.
+        - name: target_platform
+          type: keyword
+          description: Privilege Cloud platform of the target account.
+        - name: tenant_id
+          type: keyword
+          description: ID of the tenant.
+        - name: vaulted_accounts
+          type: keyword
+          description: Vaulted accounts used in the activity.

@@ -1,0 +1,140 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-10-19T08:02:11.457Z",
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "Logon",
+                "category": [
+                    "authentication",
+                    "session"
+                ],
+                "code": "PAM7",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e12",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"PVWA\",\"accountId\":null,\"accountName\":null,\"action\":\"Logon\",\"actionType\":\"Login\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":null,\"auditCode\":\"PAM7\",\"auditType\":\"Info\",\"checksum\":null,\"cloudAssets\":null,\"cloudIdentities\":null,\"cloudProvider\":null,\"cloudRoles\":null,\"cloudWorkspaces\":null,\"cloudWorkspacesAndRoles\":[],\"command\":\"\",\"component\":\"PVWA\",\"correlationId\":null,\"customData\":null,\"identityType\":\"HUMAN\",\"message\":\"User jdoe@example.com logged on to Privilege Cloud\",\"safe\":\"\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":\"5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01\",\"source\":\"pvwa-01.example.local\",\"target\":\"\",\"targetAccount\":\"\",\"targetPlatform\":\"\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792396931457,\"userId\":\"c1a2b3d4-e5f6-4789-8abc-def012345678\",\"username\":\"jdoe@example.com\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e12\",\"vaultedAccounts\":null}",
+                "outcome": "success",
+                "type": [
+                    "start"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "PVWA",
+                    "action_type": "Login",
+                    "application_code": "PAM",
+                    "audit_type": "Info",
+                    "component": "PVWA",
+                    "identity_type": "HUMAN",
+                    "service_name": "Privilege Cloud",
+                    "session_id": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                    "source": "pvwa-01.example.local",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f"
+                }
+            },
+            "message": "User jdoe@example.com logged on to Privilege Cloud",
+            "related": {
+                "user": [
+                    "jdoe@example.com",
+                    "c1a2b3d4-e5f6-4789-8abc-def012345678"
+                ]
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "id": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "name": "jdoe@example.com"
+            }
+        },
+        {
+            "@timestamp": "2026-10-19T08:31:27.215Z",
+            "destination": {
+                "as": {
+                    "number": 64502,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Madrid",
+                    "continent_name": "Europe",
+                    "country_iso_code": "ES",
+                    "country_name": "Spain",
+                    "location": {
+                        "lat": 40.41639,
+                        "lon": -3.7025
+                    },
+                    "region_iso_code": "ES-M",
+                    "region_name": "Madrid"
+                },
+                "ip": "203.0.113.40"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "CPM Change Password",
+                "category": [
+                    "iam"
+                ],
+                "code": "PAM24",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e13",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"CPM\",\"accountId\":\"52_3\",\"accountName\":\"Operating System-UnixSSH-srv-db-01.example.com-root\",\"action\":\"CPM Change Password\",\"actionType\":\"Rotate\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":null,\"auditCode\":\"PAM24\",\"auditType\":\"Info\",\"checksum\":null,\"cloudAssets\":null,\"cloudIdentities\":null,\"cloudProvider\":null,\"cloudRoles\":null,\"cloudWorkspaces\":null,\"cloudWorkspacesAndRoles\":[],\"command\":\"\",\"component\":\"CPM\",\"correlationId\":null,\"customData\":null,\"customEventData\":[{\"title\":\"Policy ID\",\"value\":\"UnixSSH\"},{\"title\":\"Change Mode\",\"value\":\"Scheduled\"},{\"title\":\"Target Ip\",\"value\":\"203.0.113.40\"}],\"identityType\":\"NON_HUMAN\",\"message\":\"CPM changed the password of account root on 203.0.113.40\",\"safe\":\"Linux-Root\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":null,\"source\":\"CPM\",\"target\":\"203.0.113.40\",\"targetAccount\":\"root\",\"targetPlatform\":\"UnixSSH\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792398687215,\"userId\":\"d4c3b2a1-f6e5-4987-8cba-0fedcba98765\",\"username\":\"PasswordManager\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e13\",\"vaultedAccounts\":null}",
+                "type": [
+                    "user",
+                    "change"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "CPM",
+                    "account_id": "52_3",
+                    "account_name": "Operating System-UnixSSH-srv-db-01.example.com-root",
+                    "action_type": "Rotate",
+                    "application_code": "PAM",
+                    "audit_type": "Info",
+                    "component": "CPM",
+                    "custom_event_data": {
+                        "Change Mode": "Scheduled",
+                        "Policy ID": "UnixSSH",
+                        "Target Ip": "203.0.113.40"
+                    },
+                    "identity_type": "NON_HUMAN",
+                    "safe": "Linux-Root",
+                    "service_name": "Privilege Cloud",
+                    "source": "CPM",
+                    "target": "203.0.113.40",
+                    "target_account": "root",
+                    "target_platform": "UnixSSH",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f"
+                }
+            },
+            "message": "CPM changed the password of account root on 203.0.113.40",
+            "related": {
+                "ip": [
+                    "203.0.113.40"
+                ],
+                "user": [
+                    "PasswordManager",
+                    "d4c3b2a1-f6e5-4987-8cba-0fedcba98765",
+                    "root"
+                ]
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "id": "d4c3b2a1-f6e5-4987-8cba-0fedcba98765",
+                "name": "PasswordManager"
+            }
+        }
+    ]
+}

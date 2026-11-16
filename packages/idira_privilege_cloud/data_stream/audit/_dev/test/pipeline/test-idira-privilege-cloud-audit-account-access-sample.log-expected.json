@@ -1,0 +1,91 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-10-19T08:07:09.830Z",
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "Retrieve password",
+                "category": [
+                    "iam"
+                ],
+                "code": "PAM295",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e03",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"PVWA\",\"accountId\":\"45_7\",\"accountName\":\"Operating System-WinDomain-example.com-admin_user\",\"action\":\"Retrieve password\",\"actionType\":\"Retrieve\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":null,\"auditCode\":\"PAM295\",\"auditType\":\"Info\",\"checksum\":null,\"cloudAssets\":null,\"cloudIdentities\":null,\"cloudProvider\":null,\"cloudRoles\":null,\"cloudWorkspaces\":null,\"cloudWorkspacesAndRoles\":[],\"command\":\"\",\"component\":\"PVWA\",\"correlationId\":\"b7e4c2a9-1d3f-4e5a-8b6c-9d0e1f2a3b03\",\"customData\":{\"reason\":\"Scheduled maintenance on host-1.example.local\",\"ticketId\":\"CHG0012345\",\"ticketingSystem\":\"ServiceNow\"},\"identityType\":\"HUMAN\",\"message\":\"User jdoe@example.com retrieved the password of account admin_user on 203.0.113.15\",\"safe\":\"Windows-Servers\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":\"5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01\",\"source\":\"192.0.2.10\",\"target\":\"203.0.113.15\",\"targetAccount\":\"admin_user\",\"targetPlatform\":\"WinDomain\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792397229830,\"userId\":\"c1a2b3d4-e5f6-4789-8abc-def012345678\",\"username\":\"jdoe@example.com\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e03\",\"vaultedAccounts\":null}",
+                "type": [
+                    "user",
+                    "info"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "PVWA",
+                    "account_id": "45_7",
+                    "account_name": "Operating System-WinDomain-example.com-admin_user",
+                    "action_type": "Retrieve",
+                    "application_code": "PAM",
+                    "audit_type": "Info",
+                    "component": "PVWA",
+                    "correlation_id": "b7e4c2a9-1d3f-4e5a-8b6c-9d0e1f2a3b03",
+                    "custom_data": {
+                        "reason": "Scheduled maintenance on host-1.example.local",
+                        "ticketId": "CHG0012345",
+                        "ticketingSystem": "ServiceNow"
+                    },
+                    "identity_type": "HUMAN",
+                    "safe": "Windows-Servers",
+                    "service_name": "Privilege Cloud",
+                    "session_id": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                    "target": "203.0.113.15",
+                    "target_account": "admin_user",
+                    "target_platform": "WinDomain",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f"
+                }
+            },
+            "message": "User jdoe@example.com retrieved the password of account admin_user on 203.0.113.15",
+            "related": {
+                "ip": [
+                    "192.0.2.10",
+                    "203.0.113.15"
+                ],
+                "user": [
+                    "jdoe@example.com",
+                    "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                    "admin_user"
+                ]
+            },
+            "source": {
+                "as": {
+                    "number": 64500,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Las Vegas",
+                    "continent_name": "North America",
+                    "country_iso_code": "US",
+                    "country_name": "United States",
+                    "location": {
+                        "lat": 36.17497,
+                        "lon": -115.13722
+                    },
+                    "region_iso_code": "US-NV",
+                    "region_name": "Nevada"
+                },
+                "ip": "192.0.2.10"
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "id": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "name": "jdoe@example.com"
+            }
+        }
+    ]
+}

@@ -343,6 +343,7 @@
 /packages/ibm_qradar @elastic/security-service-integrations @elastic/sit-crest-contractors
 /packages/ibmmq @elastic/obs-infraobs-integrations
 /packages/ibmmq_otel @elastic/obs-infraobs-integrations
+/packages/idira_privilege_cloud @elastic/security-service-integrations @elastic/sit-crest-contractors
 /packages/iis @elastic/obs-infraobs-integrations
 /packages/iis_input_otel @elastic/obs-infraobs-integrations
 /packages/iis_otel @elastic/obs-infraobs-integrations

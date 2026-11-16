@@ -1,0 +1,82 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-10-19T09:44:01.771Z",
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "Changes were made successfully to the Master Policy",
+                "category": [
+                    "configuration"
+                ],
+                "code": "PAM385",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e07",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"PVWA\",\"accountId\":null,\"accountName\":null,\"action\":\"Changes were made successfully to the Master Policy\",\"actionType\":\"Edit\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":null,\"auditCode\":\"PAM385\",\"auditType\":\"Info\",\"checksum\":null,\"cloudAssets\":null,\"cloudIdentities\":null,\"cloudProvider\":null,\"cloudRoles\":null,\"cloudWorkspaces\":null,\"cloudWorkspacesAndRoles\":[],\"command\":\"\",\"component\":\"PVWA\",\"correlationId\":null,\"customData\":null,\"customEventData\":[{\"title\":\"Rule\",\"value\":\"Require users to specify reason for access\"},{\"title\":\"Previous Value\",\"value\":\"Inactive\"},{\"title\":\"New Value\",\"value\":\"Active\"}],\"identityType\":\"HUMAN\",\"message\":\"Changes were made successfully to the Master Policy\",\"safe\":\"\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":\"7a9b8c7d-6e5f-4a3b-9c2d-1e0f9a8b7c06\",\"source\":\"192.0.2.25\",\"target\":\"\",\"targetAccount\":\"\",\"targetPlatform\":\"\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792403041771,\"userId\":\"e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9\",\"username\":\"admin_user@example.com\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e07\",\"vaultedAccounts\":null}",
+                "outcome": "success",
+                "type": [
+                    "change"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "PVWA",
+                    "action_type": "Edit",
+                    "application_code": "PAM",
+                    "audit_type": "Info",
+                    "component": "PVWA",
+                    "custom_event_data": {
+                        "New Value": "Active",
+                        "Previous Value": "Inactive",
+                        "Rule": "Require users to specify reason for access"
+                    },
+                    "identity_type": "HUMAN",
+                    "service_name": "Privilege Cloud",
+                    "session_id": "7a9b8c7d-6e5f-4a3b-9c2d-1e0f9a8b7c06",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f"
+                }
+            },
+            "message": "Changes were made successfully to the Master Policy",
+            "related": {
+                "ip": [
+                    "192.0.2.25"
+                ],
+                "user": [
+                    "admin_user@example.com",
+                    "e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9"
+                ]
+            },
+            "source": {
+                "as": {
+                    "number": 64500,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Las Vegas",
+                    "continent_name": "North America",
+                    "country_iso_code": "US",
+                    "country_name": "United States",
+                    "location": {
+                        "lat": 36.17497,
+                        "lon": -115.13722
+                    },
+                    "region_iso_code": "US-NV",
+                    "region_name": "Nevada"
+                },
+                "ip": "192.0.2.25"
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "id": "e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9",
+                "name": "admin_user@example.com"
+            }
+        }
+    ]
+}

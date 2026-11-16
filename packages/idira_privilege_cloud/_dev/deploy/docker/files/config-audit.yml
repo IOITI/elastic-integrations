@@ -1,0 +1,665 @@
+# Mock of the Idira Identity OAuth2 token endpoint and the Audit "Export to SIEM" API.
+#
+# Request flow modelled (one Audit API call per CEL evaluation):
+#   token -> createQuery -> results(cursor-r1-p1) -> results(cursor-r1-p2)
+#         -> results(cursor-r1-p3) -> results(cursor-r1-p4) = empty page, window committed
+#   next interval: createQuery -> results(cursor-r2-p1) -> results(cursor-r2-p2) = empty page
+#   later intervals: createQuery -> results(cursor-idle) = empty page
+#
+# Round 1 yields 3 + 3 + 2 events and round 2 yields 2 events (hit_count 10). An empty data
+# array is the only end-of-query signal; the cursorRef returned with an empty page must not
+# be requested again (see the regression guard rule).
+#
+# Request headers are matched as regular expressions.
+rules:
+  # OAuth2 client credentials token request as sent by the CEL input's auth.oauth2 client:
+  # HTTP Basic client authentication with a form-encoded body.
+  - path: /oauth2/token/elastic_audit_app
+    methods: ['POST']
+    user: svc_elastic
+    password: test-client-secret
+    query_params:
+      grant_type: client_credentials
+      scope: isp.audit.events:read
+    request_headers:
+      Content-Type:
+        - '^application/x-www-form-urlencoded'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: '{"access_token":"test-access-token","token_type":"Bearer","expires_in":3600,"scope":"isp.audit.events:read"}'
+  # The same token request with the JSON body illustrated in the vendor's client credentials
+  # guide (used by the research test-api.py script).
+  - path: /oauth2/token/elastic_audit_app
+    methods: ['POST']
+    user: svc_elastic
+    password: test-client-secret
+    request_headers:
+      Content-Type:
+        - '^application/json'
+    request_body: '/"grant_type":\s*"client_credentials".*"scope":\s*"isp\.audit\.events:read"/'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: '{"access_token":"test-access-token","token_type":"Bearer","expires_in":3600,"scope":"isp.audit.events:read"}'
+  # createQuery: requires the PAM application-code filter and a dateFrom/dateTo window in
+  # the documented "YYYY-MM-DD HH:MM:SS" format, in either key order. The first call starts
+  # round 1, the second call starts round 2 and any later call returns an idle query.
+  - path: /api/audits/stream/createQuery
+    methods: ['POST']
+    request_headers:
+      Authorization:
+        - '^Bearer test-access-token$'
+      x-api-key:
+        - '^test-api-key$'
+      Content-Type:
+        - '^application/json'
+    request_body: '/("date":\{"dateFrom":"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}","dateTo":"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"\}.*"applicationCode":\[\{"op":"include","params":\["PAM"\]\}\]|"applicationCode":\[\{"op":"include","params":\["PAM"\]\}\].*"date":\{"dateFrom":"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}","dateTo":"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"\})/'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: |-
+          {{ if eq .req_num 1 }}{"cursorRef":"cursor-r1-p1"}{{ else if eq .req_num 2 }}{"cursorRef":"cursor-r2-p1"}{{ else }}{"cursorRef":"cursor-idle"}{{ end }}
+  # Round 1, page 1: user logon, authentication failure, password retrieval.
+  - path: /api/audits/stream/results
+    methods: ['POST']
+    request_headers:
+      Authorization:
+        - '^Bearer test-access-token$'
+      x-api-key:
+        - '^test-api-key$'
+      Content-Type:
+        - '^application/json'
+    request_body: '{"cursorRef":"cursor-r1-p1"}'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: |-
+          {{ minify_json `
+          {
+            "data": [
+              {
+                "accessMethod": "PVWA",
+                "accountId": null,
+                "accountName": null,
+                "action": "Logon",
+                "actionType": "Login",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM7",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": null,
+                "customData": null,
+                "identityType": "HUMAN",
+                "message": "User jdoe@example.com logged on to Privilege Cloud",
+                "safe": "",
+                "serviceName": "Privilege Cloud",
+                "sessionId": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                "source": "192.0.2.10",
+                "target": "",
+                "targetAccount": "",
+                "targetPlatform": "",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792396931457,
+                "userId": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "username": "jdoe@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e01",
+                "vaultedAccounts": null
+              },
+              {
+                "accessMethod": "PVWA",
+                "accountId": null,
+                "accountName": null,
+                "action": "User Authentication Failure",
+                "actionType": "Login",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM4",
+                "auditType": "Failure",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": null,
+                "customData": null,
+                "identityType": "HUMAN",
+                "message": "Authentication failed for user asmith@example.com: invalid credentials",
+                "safe": "",
+                "serviceName": "Privilege Cloud",
+                "sessionId": null,
+                "source": "198.51.100.23",
+                "target": "",
+                "targetAccount": "",
+                "targetPlatform": "",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792397143102,
+                "userId": "",
+                "username": "asmith@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e02",
+                "vaultedAccounts": null
+              },
+              {
+                "accessMethod": "PVWA",
+                "accountId": "45_7",
+                "accountName": "Operating System-WinDomain-example.com-admin_user",
+                "action": "Retrieve password",
+                "actionType": "Retrieve",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM295",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": "b7e4c2a9-1d3f-4e5a-8b6c-9d0e1f2a3b03",
+                "customData": {
+                  "reason": "Scheduled maintenance on host-1.example.local",
+                  "ticketId": "CHG0012345",
+                  "ticketingSystem": "ServiceNow"
+                },
+                "identityType": "HUMAN",
+                "message": "User jdoe@example.com retrieved the password of account admin_user on 203.0.113.15",
+                "safe": "Windows-Servers",
+                "serviceName": "Privilege Cloud",
+                "sessionId": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                "source": "192.0.2.10",
+                "target": "203.0.113.15",
+                "targetAccount": "admin_user",
+                "targetPlatform": "WinDomain",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792397229830,
+                "userId": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "username": "jdoe@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e03",
+                "vaultedAccounts": null
+              }
+            ],
+            "paging": {
+              "cursor": {
+                "cursorRef": "cursor-r1-p2"
+              }
+            }
+          }
+          `}}
+  # Round 1, page 2: CPM password change, Safe creation, Safe member added.
+  - path: /api/audits/stream/results
+    methods: ['POST']
+    request_headers:
+      Authorization:
+        - '^Bearer test-access-token$'
+      x-api-key:
+        - '^test-api-key$'
+      Content-Type:
+        - '^application/json'
+    request_body: '{"cursorRef":"cursor-r1-p2"}'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: |-
+          {{ minify_json `
+          {
+            "data": [
+              {
+                "accessMethod": "CPM",
+                "accountId": "52_3",
+                "accountName": "Operating System-UnixSSH-srv-db-01.example.com-root",
+                "action": "CPM Change Password",
+                "actionType": "Rotate",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM24",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "CPM",
+                "correlationId": null,
+                "customData": null,
+                "customEventData": [
+                  {
+                    "title": "Policy ID",
+                    "value": "UnixSSH"
+                  },
+                  {
+                    "title": "Change Mode",
+                    "value": "Scheduled"
+                  },
+                  {
+                    "title": "Target Ip",
+                    "value": "203.0.113.40"
+                  }
+                ],
+                "identityType": "NON_HUMAN",
+                "message": "CPM changed the password of account root on srv-db-01.example.com",
+                "safe": "Linux-Root",
+                "serviceName": "Privilege Cloud",
+                "sessionId": null,
+                "source": "198.51.100.5",
+                "target": "srv-db-01.example.com",
+                "targetAccount": "root",
+                "targetPlatform": "UnixSSH",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792398687215,
+                "userId": "d4c3b2a1-f6e5-4987-8cba-0fedcba98765",
+                "username": "PasswordManager",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e04",
+                "vaultedAccounts": null
+              },
+              {
+                "accessMethod": "API",
+                "accountId": null,
+                "accountName": null,
+                "action": "Add Safe",
+                "actionType": "Create",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM185",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": null,
+                "customData": {
+                  "description": "Finance application accounts",
+                  "managingCPM": "PasswordManager",
+                  "retentionDays": "7"
+                },
+                "identityType": "HUMAN",
+                "message": "Safe Finance-Apps was added",
+                "safe": "Finance-Apps",
+                "serviceName": "Privilege Cloud",
+                "sessionId": null,
+                "source": "192.0.2.25",
+                "target": "",
+                "targetAccount": "",
+                "targetPlatform": "",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792401174603,
+                "userId": "e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9",
+                "username": "admin_user@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e05",
+                "vaultedAccounts": null
+              },
+              {
+                "accessMethod": "API",
+                "accountId": null,
+                "accountName": null,
+                "action": "Add Owner",
+                "actionType": "Create",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM32",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": null,
+                "customData": {
+                  "member": "jdoe@example.com",
+                  "memberType": "User",
+                  "permissions": "ListAccounts,UseAccounts,RetrieveAccounts"
+                },
+                "identityType": "HUMAN",
+                "message": "Member jdoe@example.com was added to Safe Finance-Apps",
+                "safe": "Finance-Apps",
+                "serviceName": "Privilege Cloud",
+                "sessionId": null,
+                "source": "192.0.2.25",
+                "target": "jdoe@example.com",
+                "targetAccount": "",
+                "targetPlatform": "",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792401200048,
+                "userId": "e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9",
+                "username": "admin_user@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e06",
+                "vaultedAccounts": null
+              }
+            ],
+            "paging": {
+              "cursor": {
+                "cursorRef": "cursor-r1-p3"
+              }
+            }
+          }
+          `}}
+  # Round 1, page 3 (short page, not the end): Master Policy change, Safe access request.
+  - path: /api/audits/stream/results
+    methods: ['POST']
+    request_headers:
+      Authorization:
+        - '^Bearer test-access-token$'
+      x-api-key:
+        - '^test-api-key$'
+      Content-Type:
+        - '^application/json'
+    request_body: '{"cursorRef":"cursor-r1-p3"}'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: |-
+          {{ minify_json `
+          {
+            "data": [
+              {
+                "accessMethod": "PVWA",
+                "accountId": null,
+                "accountName": null,
+                "action": "Changes were made successfully to the Master Policy",
+                "actionType": "Edit",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM385",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": null,
+                "customData": null,
+                "customEventData": [
+                  {
+                    "title": "Rule",
+                    "value": "Require users to specify reason for access"
+                  },
+                  {
+                    "title": "Previous Value",
+                    "value": "Inactive"
+                  },
+                  {
+                    "title": "New Value",
+                    "value": "Active"
+                  }
+                ],
+                "identityType": "HUMAN",
+                "message": "Changes were made successfully to the Master Policy",
+                "safe": "",
+                "serviceName": "Privilege Cloud",
+                "sessionId": "7a9b8c7d-6e5f-4a3b-9c2d-1e0f9a8b7c06",
+                "source": "192.0.2.25",
+                "target": "",
+                "targetAccount": "",
+                "targetPlatform": "",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792403041771,
+                "userId": "e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9",
+                "username": "admin_user@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e07",
+                "vaultedAccounts": null
+              },
+              {
+                "accessMethod": "PVWA",
+                "accountId": "61_2",
+                "accountName": "Database-MSSql-db-fin-01.example.com-sa",
+                "action": "Open Safe Request",
+                "actionType": "Submit",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM108",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": "3e2d1c0b-9a8f-4e7d-8c6b-5a4f3e2d1c08",
+                "customData": {
+                  "accessType": "Timed",
+                  "reason": "Quarterly financial audit",
+                  "requestId": "REQ000123",
+                  "validUntil": "2026-10-19T18:00:00Z"
+                },
+                "identityType": "HUMAN",
+                "message": "User jdoe@example.com requested access to Safe Finance-Apps",
+                "safe": "Finance-Apps",
+                "serviceName": "Privilege Cloud",
+                "sessionId": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                "source": "192.0.2.10",
+                "target": "db-fin-01.example.com",
+                "targetAccount": "sa",
+                "targetPlatform": "MSSql",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792404936390,
+                "userId": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "username": "jdoe@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e08",
+                "vaultedAccounts": null
+              }
+            ],
+            "paging": {
+              "cursor": {
+                "cursorRef": "cursor-r1-p4"
+              }
+            }
+          }
+          `}}
+  # Round 1, page 4: empty data array, the end of the round 1 query.
+  - path: /api/audits/stream/results
+    methods: ['POST']
+    request_headers:
+      Authorization:
+        - '^Bearer test-access-token$'
+      x-api-key:
+        - '^test-api-key$'
+      Content-Type:
+        - '^application/json'
+    request_body: '{"cursorRef":"cursor-r1-p4"}'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: '{"data":[],"paging":{"cursor":{"cursorRef":"cursor-r1-end"}}}'
+  # Round 2, page 1: Safe access request approved, user logoff.
+  - path: /api/audits/stream/results
+    methods: ['POST']
+    request_headers:
+      Authorization:
+        - '^Bearer test-access-token$'
+      x-api-key:
+        - '^test-api-key$'
+      Content-Type:
+        - '^application/json'
+    request_body: '{"cursorRef":"cursor-r2-p1"}'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: |-
+          {{ minify_json `
+          {
+            "data": [
+              {
+                "accessMethod": "PVWA",
+                "accountId": "61_2",
+                "accountName": "Database-MSSql-db-fin-01.example.com-sa",
+                "action": "Confirm Open Safe",
+                "actionType": "Approve",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM36",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": "3e2d1c0b-9a8f-4e7d-8c6b-5a4f3e2d1c08",
+                "customData": {
+                  "requestId": "REQ000123",
+                  "requestingUser": "jdoe@example.com"
+                },
+                "identityType": "HUMAN",
+                "message": "User admin_user@example.com confirmed the request of jdoe@example.com to access Safe Finance-Apps",
+                "safe": "Finance-Apps",
+                "serviceName": "Privilege Cloud",
+                "sessionId": "7a9b8c7d-6e5f-4a3b-9c2d-1e0f9a8b7c06",
+                "source": "192.0.2.25",
+                "target": "db-fin-01.example.com",
+                "targetAccount": "sa",
+                "targetPlatform": "MSSql",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792405368914,
+                "userId": "e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9",
+                "username": "admin_user@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e09",
+                "vaultedAccounts": null
+              },
+              {
+                "accessMethod": "PVWA",
+                "accountId": null,
+                "accountName": null,
+                "action": "Logoff",
+                "actionType": "Logout",
+                "applicationCode": "PAM",
+                "arrivalTimestamp": null,
+                "auditCode": "PAM8",
+                "auditType": "Info",
+                "checksum": null,
+                "cloudAssets": null,
+                "cloudIdentities": null,
+                "cloudProvider": null,
+                "cloudRoles": null,
+                "cloudWorkspaces": null,
+                "cloudWorkspacesAndRoles": [],
+                "command": "",
+                "component": "PVWA",
+                "correlationId": null,
+                "customData": null,
+                "identityType": "HUMAN",
+                "message": "User jdoe@example.com logged off from Privilege Cloud",
+                "safe": "",
+                "serviceName": "Privilege Cloud",
+                "sessionId": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                "source": "192.0.2.10",
+                "target": "",
+                "targetAccount": "",
+                "targetPlatform": "",
+                "tenantId": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                "timestamp": 1792411085126,
+                "userId": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "username": "jdoe@example.com",
+                "uuid": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e10",
+                "vaultedAccounts": null
+              }
+            ],
+            "paging": {
+              "cursor": {
+                "cursorRef": "cursor-r2-p2"
+              }
+            }
+          }
+          `}}
+  # Round 2, page 2 and every later idle query: empty data array.
+  - path: /api/audits/stream/results
+    methods: ['POST']
+    request_headers:
+      Authorization:
+        - '^Bearer test-access-token$'
+      x-api-key:
+        - '^test-api-key$'
+      Content-Type:
+        - '^application/json'
+    request_body: '/^\{"cursorRef":"cursor-(r2-p2|idle)"\}$/'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: '{"data":[],"paging":{"cursor":{"cursorRef":"cursor-{{ if eq .req_num 1 }}r2{{ else }}idle{{ end }}-end"}}}'
+  # Regression guard: a client that keeps paging after an empty data array would request one
+  # of these cursors. The extra events make hit_count fail.
+  - path: /api/audits/stream/results
+    methods: ['POST']
+    request_body: '/^\{"cursorRef":"cursor-[a-z0-9-]+-end"\}$/'
+    responses:
+      - status_code: 200
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: '{"data":[{"applicationCode":"PAM","auditCode":"PAM7","action":"REGRESSION: results requested after an empty page","uuid":"00000000-0000-4000-8000-000000000001","timestamp":1792396931457},{"applicationCode":"PAM","auditCode":"PAM7","action":"REGRESSION: results requested after an empty page","uuid":"00000000-0000-4000-8000-000000000002","timestamp":1792396931457}],"paging":{"cursor":{"cursorRef":"cursor-regression"}}}'
+  # Error responses (ApiBasicError body) for error-path validation; not used by the default
+  # system test. An invalid SIEM API key returns 403, an expired cursorRef returns 400.
+  - path: /api/audits/stream/{operation:createQuery|results}
+    methods: ['POST']
+    request_headers:
+      x-api-key:
+        - '^invalid-api-key$'
+    responses:
+      - status_code: 403
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: '{"code":"Forbidden","message":"Invalid API key","description":""}'
+  - path: /api/audits/stream/results
+    methods: ['POST']
+    request_body: '{"cursorRef":"cursor-expired"}'
+    responses:
+      - status_code: 400
+        headers:
+          Content-Type:
+            - 'application/json'
+        body: '{"code":"BadRequest","message":"Invalid cursorRef","description":"The cursor has expired or does not exist"}'

@@ -1,0 +1,222 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-10-19T08:02:11.457Z",
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "Logon",
+                "category": [
+                    "authentication",
+                    "session"
+                ],
+                "code": "PAM7",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e01",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"PVWA\",\"accountId\":null,\"accountName\":null,\"action\":\"Logon\",\"actionType\":\"Login\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":null,\"auditCode\":\"PAM7\",\"auditType\":\"Info\",\"checksum\":null,\"cloudAssets\":null,\"cloudIdentities\":null,\"cloudProvider\":null,\"cloudRoles\":null,\"cloudWorkspaces\":null,\"cloudWorkspacesAndRoles\":[],\"command\":\"\",\"component\":\"PVWA\",\"correlationId\":null,\"customData\":null,\"identityType\":\"HUMAN\",\"message\":\"User jdoe@example.com logged on to Privilege Cloud\",\"safe\":\"\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":\"5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01\",\"source\":\"192.0.2.10\",\"target\":\"\",\"targetAccount\":\"\",\"targetPlatform\":\"\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792396931457,\"userId\":\"c1a2b3d4-e5f6-4789-8abc-def012345678\",\"username\":\"jdoe@example.com\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e01\",\"vaultedAccounts\":null}",
+                "outcome": "success",
+                "type": [
+                    "start"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "PVWA",
+                    "action_type": "Login",
+                    "application_code": "PAM",
+                    "audit_type": "Info",
+                    "component": "PVWA",
+                    "identity_type": "HUMAN",
+                    "service_name": "Privilege Cloud",
+                    "session_id": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f"
+                }
+            },
+            "message": "User jdoe@example.com logged on to Privilege Cloud",
+            "related": {
+                "ip": [
+                    "192.0.2.10"
+                ],
+                "user": [
+                    "jdoe@example.com",
+                    "c1a2b3d4-e5f6-4789-8abc-def012345678"
+                ]
+            },
+            "source": {
+                "as": {
+                    "number": 64500,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Las Vegas",
+                    "continent_name": "North America",
+                    "country_iso_code": "US",
+                    "country_name": "United States",
+                    "location": {
+                        "lat": 36.17497,
+                        "lon": -115.13722
+                    },
+                    "region_iso_code": "US-NV",
+                    "region_name": "Nevada"
+                },
+                "ip": "192.0.2.10"
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "id": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "name": "jdoe@example.com"
+            }
+        },
+        {
+            "@timestamp": "2026-10-19T08:05:43.102Z",
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "User Authentication Failure",
+                "category": [
+                    "authentication"
+                ],
+                "code": "PAM4",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e02",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"PVWA\",\"accountId\":null,\"accountName\":null,\"action\":\"User Authentication Failure\",\"actionType\":\"Login\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":null,\"auditCode\":\"PAM4\",\"auditType\":\"Failure\",\"checksum\":null,\"cloudAssets\":null,\"cloudIdentities\":null,\"cloudProvider\":null,\"cloudRoles\":null,\"cloudWorkspaces\":null,\"cloudWorkspacesAndRoles\":[],\"command\":\"\",\"component\":\"PVWA\",\"correlationId\":null,\"customData\":null,\"identityType\":\"HUMAN\",\"message\":\"Authentication failed for user asmith@example.com: invalid credentials\",\"safe\":\"\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":null,\"source\":\"198.51.100.23\",\"target\":\"\",\"targetAccount\":\"\",\"targetPlatform\":\"\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792397143102,\"userId\":\"\",\"username\":\"asmith@example.com\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e02\",\"vaultedAccounts\":null}",
+                "outcome": "failure",
+                "type": [
+                    "start"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "PVWA",
+                    "action_type": "Login",
+                    "application_code": "PAM",
+                    "audit_type": "Failure",
+                    "component": "PVWA",
+                    "identity_type": "HUMAN",
+                    "service_name": "Privilege Cloud",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f"
+                }
+            },
+            "message": "Authentication failed for user asmith@example.com: invalid credentials",
+            "related": {
+                "ip": [
+                    "198.51.100.23"
+                ],
+                "user": [
+                    "asmith@example.com"
+                ]
+            },
+            "source": {
+                "as": {
+                    "number": 64501,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Amsterdam",
+                    "continent_name": "Europe",
+                    "country_iso_code": "NL",
+                    "country_name": "Netherlands",
+                    "location": {
+                        "lat": 52.37404,
+                        "lon": 4.88969
+                    },
+                    "region_iso_code": "NL-NH",
+                    "region_name": "North Holland"
+                },
+                "ip": "198.51.100.23"
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "name": "asmith@example.com"
+            }
+        },
+        {
+            "@timestamp": "2026-10-19T11:58:05.126Z",
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "Logoff",
+                "category": [
+                    "authentication",
+                    "session"
+                ],
+                "code": "PAM8",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e10",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"PVWA\",\"accountId\":null,\"accountName\":null,\"action\":\"Logoff\",\"actionType\":\"Logout\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":null,\"auditCode\":\"PAM8\",\"auditType\":\"Info\",\"checksum\":null,\"cloudAssets\":null,\"cloudIdentities\":null,\"cloudProvider\":null,\"cloudRoles\":null,\"cloudWorkspaces\":null,\"cloudWorkspacesAndRoles\":[],\"command\":\"\",\"component\":\"PVWA\",\"correlationId\":null,\"customData\":null,\"identityType\":\"HUMAN\",\"message\":\"User jdoe@example.com logged off from Privilege Cloud\",\"safe\":\"\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":\"5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01\",\"source\":\"192.0.2.10\",\"target\":\"\",\"targetAccount\":\"\",\"targetPlatform\":\"\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792411085126,\"userId\":\"c1a2b3d4-e5f6-4789-8abc-def012345678\",\"username\":\"jdoe@example.com\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e10\",\"vaultedAccounts\":null}",
+                "outcome": "success",
+                "type": [
+                    "end"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "PVWA",
+                    "action_type": "Logout",
+                    "application_code": "PAM",
+                    "audit_type": "Info",
+                    "component": "PVWA",
+                    "identity_type": "HUMAN",
+                    "service_name": "Privilege Cloud",
+                    "session_id": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f"
+                }
+            },
+            "message": "User jdoe@example.com logged off from Privilege Cloud",
+            "related": {
+                "ip": [
+                    "192.0.2.10"
+                ],
+                "user": [
+                    "jdoe@example.com",
+                    "c1a2b3d4-e5f6-4789-8abc-def012345678"
+                ]
+            },
+            "source": {
+                "as": {
+                    "number": 64500,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Las Vegas",
+                    "continent_name": "North America",
+                    "country_iso_code": "US",
+                    "country_name": "United States",
+                    "location": {
+                        "lat": 36.17497,
+                        "lon": -115.13722
+                    },
+                    "region_iso_code": "US-NV",
+                    "region_name": "Nevada"
+                },
+                "ip": "192.0.2.10"
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "id": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "name": "jdoe@example.com"
+            }
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+fields:
+  tags:
+    - preserve_original_event
+    - forwarded
+    - idira_privilege_cloud-audit

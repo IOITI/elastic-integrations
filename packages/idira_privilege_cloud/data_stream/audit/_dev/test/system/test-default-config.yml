@@ -1,0 +1,22 @@
+wait_for_data_timeout: 1m
+input: cel
+service: idira_privilege_cloud
+vars:
+  url: http://{{Hostname}}:{{Port}}
+  api_key: test-api-key
+  identity_id: elastic-test
+  identity_application_id: elastic_audit_app
+  token_url: http://{{Hostname}}:{{Port}}/oauth2/token/elastic_audit_app
+  client_id: svc_elastic
+  client_secret: test-client-secret
+data_stream:
+  vars:
+    interval: 2s
+    initial_interval: 24h
+    page_size: 3
+    # The default limit spaces Audit API calls one minute apart; raise it so both
+    # collection rounds finish within wait_for_data_timeout.
+    resource_rate_limit_limit: 10
+    preserve_original_event: true
+assert:
+  hit_count: 10

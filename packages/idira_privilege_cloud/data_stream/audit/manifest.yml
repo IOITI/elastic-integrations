@@ -1,0 +1,95 @@
+title: Audit logs
+type: logs
+streams:
+  - input: cel
+    title: Idira Privilege Cloud audit logs
+    description: |-
+      Collect Idira Privilege Cloud audit logs via the Audit Export to SIEM API.
+    template_path: cel.yml.hbs
+    vars:
+      - name: interval
+        type: text
+        title: Interval
+        description: >-
+          How often to poll the Audit API for new audit events. A poll usually makes at least two API calls (create a query, then read its results), and the API can be called only once a minute. Supported units for this parameter are h/m/s.
+        multi: false
+        required: true
+        show_user: true
+        default: 5m
+      - name: initial_interval
+        type: text
+        title: Initial Interval
+        description: >-
+          How far back to collect audit events on the first poll. The Audit API serves only the previous 7 days, so longer values are capped at 167h. Supported units for this parameter are h/m/s.
+        multi: false
+        required: true
+        show_user: true
+        default: 24h
+      - name: query_delay
+        type: text
+        title: Query Delay
+        description: >-
+          How far behind the current time each audit query window ends. Audit records can take several minutes to become available through the API, and a time window is not queried again after it has been collected. Increasing this value pauses collection until the new window end passes the last collected time. It must be less than seven days, because the API only serves the previous seven days. Supported units for this parameter are h/m/s.
+        multi: false
+        required: true
+        show_user: false
+        default: 5m
+      - name: page_size
+        type: integer
+        title: Page Size
+        description: Number of audit events to request per results page. The maximum supported by the API is 500.
+        multi: false
+        required: true
+        show_user: false
+        default: 500
+      - name: resource_rate_limit_limit
+        type: text
+        title: Audit API Rate Limit
+        description: >-
+          Maximum number of Audit API requests per second. The API can be called only once a minute, and the default of 0.016 spaces requests about 62 seconds apart to leave headroom for network jitter, so collecting a query window takes about one minute per results page. OAuth2 token requests are not counted.
+        multi: false
+        required: true
+        show_user: false
+        default: "0.016"
+      - name: http_client_timeout
+        type: text
+        title: HTTP Client Timeout
+        description: Duration before declaring that the HTTP client connection has timed out. Supported time units are ns, us, ms, s, m, h.
+        multi: false
+        required: false
+        show_user: false
+        default: 30s
+      - name: enable_request_tracer
+        type: bool
+        title: Enable request tracing
+        description: >-
+          The request tracer logs requests and responses to the agent's local file-system for debugging configurations. Enabling this request tracing compromises security and should only be used for debugging. See [documentation](https://www.elastic.co/docs/reference/integrations/inputs/input-cel#_resource_tracer_filename) for details.
+        multi: false
+        required: false
+        show_user: false
+        default: false
+      - name: tags
+        type: text
+        title: Tags
+        multi: true
+        required: true
+        show_user: false
+        default:
+          - forwarded
+          - idira_privilege_cloud-audit
+      - name: preserve_original_event
+        type: bool
+        title: Preserve original event
+        description: Preserves a raw copy of the original event, added to the field `event.original`.
+        multi: false
+        required: true
+        show_user: true
+        default: false
+      - name: processors
+        type: yaml
+        title: Processors
+        description: >-
+          Processors are used to reduce the number of fields in the exported event or to enhance the event with metadata. This executes in the agent before the logs are parsed. See [Processors](https://www.elastic.co/guide/en/fleet/current/elastic-agent-processor-configuration.html) for details.
+        multi: false
+        required: false
+        show_user: false

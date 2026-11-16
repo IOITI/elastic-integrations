@@ -1,0 +1,562 @@
+---
+description: Pipeline for processing Idira Privilege Cloud audit logs.
+processors:
+  - set:
+      tag: set_ecs_version
+      field: ecs.version
+      value: '9.3.0'
+
+  # --- CEL input only ---
+  - remove:
+      tag: remove_agentless_tags
+      field:
+        - organization
+        - division
+        - team
+      ignore_missing: true
+      if: ctx.organization instanceof String && ctx.division instanceof String && ctx.team instanceof String
+      description: >-
+        Removes the fields added by Agentless as metadata,
+        as they can collide with ECS fields.
+  - terminate:
+      tag: data_collection_error
+      if: ctx.error?.message != null && ctx.message == null && ctx.event?.original == null
+      description: error message set and no data to process.
+  # --- end CEL only ---
+
+  - rename:
+      tag: rename_message_to_event_original
+      field: message
+      target_field: event.original
+      ignore_missing: true
+      description: Renames the original `message` field to `event.original` to store a copy of the original message. The `event.original` field is not touched if the document already has one; it may happen when Logstash sends the document.
+      if: ctx.event?.original == null
+  - remove:
+      tag: remove_message
+      field: message
+      ignore_missing: true
+      description: The `message` field is no longer required if the document has an `event.original` field.
+      if: ctx.event?.original != null
+  - json:
+      tag: json_event_original
+      field: event.original
+      target_field: json
+      if: ctx.event?.original != null
+  - script:
+      tag: script_remove_empty_values
+      lang: painless
+      description: Removes null values, empty strings, empty lists and empty objects from the audit record.
+      if: ctx.json instanceof Map
+      source: |-
+        boolean isEmptyValue(def value) {
+          if (value == null) {
+            return true;
+          }
+          if (value instanceof String) {
+            return ((String) value).isEmpty();
+          }
+          if (value instanceof Map) {
+            pruneMap((Map) value);
+            return ((Map) value).isEmpty();
+          }
+          if (value instanceof List) {
+            pruneList((List) value);
+            return ((List) value).isEmpty();
+          }
+          return false;
+        }
+        void pruneMap(Map map) {
+          Iterator it = map.entrySet().iterator();
+          while (it.hasNext()) {
+            if (isEmptyValue(it.next().getValue())) {
+              it.remove();
+            }
+          }
+        }
+        void pruneList(List list) {
+          Iterator it = list.iterator();
+          while (it.hasNext()) {
+            if (isEmptyValue(it.next())) {
+              it.remove();
+            }
+          }
+        }
+        pruneMap(ctx.json);
+  - set:
+      tag: set_event_kind
+      field: event.kind
+      value: event
+
+  # Identity of the audit record. uuid is globally unique, so it also sets _id: the
+  # collector re-queries overlapping time windows and these must not create duplicates.
+  - rename:
+      tag: rename_uuid
+      field: json.uuid
+      target_field: event.id
+      ignore_missing: true
+  - fingerprint:
+      tag: fingerprint_event_id
+      fields:
+        - event.id
+      target_field: _id
+      if: ctx.event?.id != null
+  - rename:
+      tag: rename_audit_code
+      field: json.auditCode
+      target_field: event.code
+      ignore_missing: true
+  - rename:
+      tag: rename_action
+      field: json.action
+      target_field: event.action
+      ignore_missing: true
+  - rename:
+      tag: rename_message
+      field: json.message
+      target_field: message
+      ignore_missing: true
+
+  # Timestamps are integers whose unit is not consistently documented (seconds in the
+  # vendor prose, milliseconds in the API example). Values above 1e11 are milliseconds
+  # (1e11 seconds is in the year 5138); smaller values are seconds.
+  - date:
+      tag: date_timestamp_ms
+      field: json.timestamp
+      target_field: '@timestamp'
+      formats:
+        - UNIX_MS
+      if: ctx.json?.timestamp instanceof Number && ctx.json.timestamp > 100000000000L
+      on_failure:
+        - append:
+            tag: append_date_timestamp_ms_error
+            field: error.message
+            value: >-
+              Processor '{{{ _ingest.on_failure_processor_type }}}'
+              with tag '{{{ _ingest.on_failure_processor_tag }}}'
+              failed with message '{{{ _ingest.on_failure_message }}}'
+  - date:
+      tag: date_timestamp_s
+      field: json.timestamp
+      target_field: '@timestamp'
+      formats:
+        - UNIX
+      if: ctx.json?.timestamp instanceof Number && ctx.json.timestamp <= 100000000000L
+      on_failure:
+        - append:
+            tag: append_date_timestamp_s_error
+            field: error.message
+            value: >-
+              Processor '{{{ _ingest.on_failure_processor_type }}}'
+              with tag '{{{ _ingest.on_failure_processor_tag }}}'
+              failed with message '{{{ _ingest.on_failure_message }}}'
+  - date:
+      tag: date_timestamp_string
+      field: json.timestamp
+      target_field: '@timestamp'
+      formats:
+        - ISO8601
+      if: ctx.json?.timestamp instanceof String
+      on_failure:
+        - append:
+            tag: append_date_timestamp_string_error
+            field: error.message
+            value: >-
+              Processor '{{{ _ingest.on_failure_processor_type }}}'
+              with tag '{{{ _ingest.on_failure_processor_tag }}}'
+              failed with message '{{{ _ingest.on_failure_message }}}'
+  - date:
+      tag: date_arrival_timestamp_ms
+      field: json.arrivalTimestamp
+      target_field: idira_privilege_cloud.audit.arrival_timestamp
+      formats:
+        - UNIX_MS
+      if: ctx.json?.arrivalTimestamp instanceof Number && ctx.json.arrivalTimestamp > 100000000000L
+      on_failure:
+        - append:
+            tag: append_date_arrival_timestamp_ms_error
+            field: error.message
+            value: >-
+              Processor '{{{ _ingest.on_failure_processor_type }}}'
+              with tag '{{{ _ingest.on_failure_processor_tag }}}'
+              failed with message '{{{ _ingest.on_failure_message }}}'
+  - date:
+      tag: date_arrival_timestamp_s
+      field: json.arrivalTimestamp
+      target_field: idira_privilege_cloud.audit.arrival_timestamp
+      formats:
+        - UNIX
+      if: ctx.json?.arrivalTimestamp instanceof Number && ctx.json.arrivalTimestamp <= 100000000000L
+      on_failure:
+        - append:
+            tag: append_date_arrival_timestamp_s_error
+            field: error.message
+            value: >-
+              Processor '{{{ _ingest.on_failure_processor_type }}}'
+              with tag '{{{ _ingest.on_failure_processor_tag }}}'
+              failed with message '{{{ _ingest.on_failure_message }}}'
+  - date:
+      tag: date_arrival_timestamp_string
+      field: json.arrivalTimestamp
+      target_field: idira_privilege_cloud.audit.arrival_timestamp
+      formats:
+        - ISO8601
+      if: ctx.json?.arrivalTimestamp instanceof String
+      on_failure:
+        - append:
+            tag: append_date_arrival_timestamp_string_error
+            field: error.message
+            value: >-
+              Processor '{{{ _ingest.on_failure_processor_type }}}'
+              with tag '{{{ _ingest.on_failure_processor_tag }}}'
+              failed with message '{{{ _ingest.on_failure_message }}}'
+
+  # Actor.
+  - rename:
+      tag: rename_username
+      field: json.username
+      target_field: user.name
+      ignore_missing: true
+  - rename:
+      tag: rename_user_id
+      field: json.userId
+      target_field: user.id
+      ignore_missing: true
+
+  # source is documented as the source IP but is not guaranteed to be one: only
+  # valid IP addresses go to source.ip, anything else stays in the vendor namespace.
+  - convert:
+      tag: convert_source_to_source_ip
+      field: json.source
+      target_field: source.ip
+      type: ip
+      if: ctx.json?.source instanceof String
+      on_failure:
+        - rename:
+            tag: rename_non_ip_source
+            field: json.source
+            target_field: idira_privilege_cloud.audit.source
+            ignore_missing: true
+  # target is documented as the target IP, but other services use it for resource and
+  # user identifiers, so it stays in the vendor namespace and only feeds related.ip.
+  - convert:
+      tag: convert_target_ip_for_related_ip
+      field: json.target
+      target_field: _tmp.target_related_ip
+      type: ip
+      if: ctx.json?.target instanceof String
+      ignore_failure: true
+
+  - script:
+      tag: script_convert_custom_event_data
+      lang: painless
+      description: >-
+        Converts the customEventData list of title and value pairs into an object keyed
+        by title and keeps a Target Ip value for destination.ip. The list is left as it
+        is if an item has no title.
+      if: ctx.json?.customEventData instanceof List
+      params:
+        target_ip_titles:
+          - target ip
+      source: |-
+        for (def item : ctx.json.customEventData) {
+          if (!(item instanceof Map) || !(item.title instanceof String) || item.title.isEmpty()) {
+            return;
+          }
+        }
+        Map grouped = new LinkedHashMap();
+        for (def item : ctx.json.customEventData) {
+          def value = item.value;
+          if (value == null) {
+            continue;
+          }
+          String title = item.title;
+          grouped.computeIfAbsent(title, k -> new ArrayList()).add(value);
+          if (value instanceof String && params.target_ip_titles.contains(title.trim().toLowerCase())) {
+            if (ctx._tmp == null) {
+              ctx._tmp = new HashMap();
+            }
+            ctx._tmp.target_ip = value.trim();
+          }
+        }
+        if (grouped.isEmpty()) {
+          ctx.json.remove('customEventData');
+          return;
+        }
+        Map converted = new LinkedHashMap();
+        for (def entry : grouped.entrySet()) {
+          List values = entry.getValue();
+          converted.put(entry.getKey(), values.size() == 1 ? values.get(0) : values);
+        }
+        ctx.json.customEventData = converted;
+  - convert:
+      tag: convert_custom_event_data_target_ip_to_destination_ip
+      field: _tmp.target_ip
+      target_field: destination.ip
+      type: ip
+      if: ctx._tmp?.target_ip != null
+      ignore_failure: true
+
+  # Fields without an ECS equivalent.
+  - rename:
+      tag: rename_access_method
+      field: json.accessMethod
+      target_field: idira_privilege_cloud.audit.access_method
+      ignore_missing: true
+  - rename:
+      tag: rename_account_id
+      field: json.accountId
+      target_field: idira_privilege_cloud.audit.account_id
+      ignore_missing: true
+  - rename:
+      tag: rename_account_name
+      field: json.accountName
+      target_field: idira_privilege_cloud.audit.account_name
+      ignore_missing: true
+  - rename:
+      tag: rename_action_type
+      field: json.actionType
+      target_field: idira_privilege_cloud.audit.action_type
+      ignore_missing: true
+  - rename:
+      tag: rename_application_code
+      field: json.applicationCode
+      target_field: idira_privilege_cloud.audit.application_code
+      ignore_missing: true
+  - rename:
+      tag: rename_audit_type
+      field: json.auditType
+      target_field: idira_privilege_cloud.audit.audit_type
+      ignore_missing: true
+  - rename:
+      tag: rename_checksum
+      field: json.checksum
+      target_field: idira_privilege_cloud.audit.checksum
+      ignore_missing: true
+  - rename:
+      tag: rename_cloud_assets
+      field: json.cloudAssets
+      target_field: idira_privilege_cloud.audit.cloud_assets
+      ignore_missing: true
+  - rename:
+      tag: rename_cloud_identities
+      field: json.cloudIdentities
+      target_field: idira_privilege_cloud.audit.cloud_identities
+      ignore_missing: true
+  - rename:
+      tag: rename_cloud_provider
+      field: json.cloudProvider
+      target_field: idira_privilege_cloud.audit.cloud_provider
+      ignore_missing: true
+  - rename:
+      tag: rename_cloud_roles
+      field: json.cloudRoles
+      target_field: idira_privilege_cloud.audit.cloud_roles
+      ignore_missing: true
+  - rename:
+      tag: rename_cloud_workspaces
+      field: json.cloudWorkspaces
+      target_field: idira_privilege_cloud.audit.cloud_workspaces
+      ignore_missing: true
+  - rename:
+      tag: rename_cloud_workspaces_and_roles
+      field: json.cloudWorkspacesAndRoles
+      target_field: idira_privilege_cloud.audit.cloud_workspaces_and_roles
+      ignore_missing: true
+  - rename:
+      tag: rename_command
+      field: json.command
+      target_field: idira_privilege_cloud.audit.command
+      ignore_missing: true
+  - rename:
+      tag: rename_component
+      field: json.component
+      target_field: idira_privilege_cloud.audit.component
+      ignore_missing: true
+  - rename:
+      tag: rename_correlation_id
+      field: json.correlationId
+      target_field: idira_privilege_cloud.audit.correlation_id
+      ignore_missing: true
+  - rename:
+      tag: rename_custom_data
+      field: json.customData
+      target_field: idira_privilege_cloud.audit.custom_data
+      ignore_missing: true
+  - rename:
+      tag: rename_custom_event_data
+      field: json.customEventData
+      target_field: idira_privilege_cloud.audit.custom_event_data
+      ignore_missing: true
+  - rename:
+      tag: rename_identity_type
+      field: json.identityType
+      target_field: idira_privilege_cloud.audit.identity_type
+      ignore_missing: true
+  - rename:
+      tag: rename_safe
+      field: json.safe
+      target_field: idira_privilege_cloud.audit.safe
+      ignore_missing: true
+  - rename:
+      tag: rename_service_name
+      field: json.serviceName
+      target_field: idira_privilege_cloud.audit.service_name
+      ignore_missing: true
+  - rename:
+      tag: rename_session_id
+      field: json.sessionId
+      target_field: idira_privilege_cloud.audit.session_id
+      ignore_missing: true
+  - rename:
+      tag: rename_target
+      field: json.target
+      target_field: idira_privilege_cloud.audit.target
+      ignore_missing: true
+  - rename:
+      tag: rename_target_account
+      field: json.targetAccount
+      target_field: idira_privilege_cloud.audit.target_account
+      ignore_missing: true
+  - rename:
+      tag: rename_target_platform
+      field: json.targetPlatform
+      target_field: idira_privilege_cloud.audit.target_platform
+      ignore_missing: true
+  - rename:
+      tag: rename_tenant_id
+      field: json.tenantId
+      target_field: idira_privilege_cloud.audit.tenant_id
+      ignore_missing: true
+  - rename:
+      tag: rename_vaulted_accounts
+      field: json.vaultedAccounts
+      target_field: idira_privilege_cloud.audit.vaulted_accounts
+      ignore_missing: true
+
+  # IP geolocation and AS lookups.
+  - geoip:
+      tag: geoip_source_ip
+      field: source.ip
+      target_field: source.geo
+      if: ctx.source?.ip != null
+      ignore_missing: true
+  - geoip:
+      tag: geoip_destination_ip
+      field: destination.ip
+      target_field: destination.geo
+      if: ctx.destination?.ip != null
+      ignore_missing: true
+  - geoip:
+      tag: geoip_source_asn
+      database_file: GeoLite2-ASN.mmdb
+      field: source.ip
+      target_field: source.as
+      if: ctx.source?.ip != null
+      properties:
+        - asn
+        - organization_name
+      ignore_missing: true
+  - geoip:
+      tag: geoip_destination_asn
+      database_file: GeoLite2-ASN.mmdb
+      field: destination.ip
+      target_field: destination.as
+      if: ctx.destination?.ip != null
+      properties:
+        - asn
+        - organization_name
+      ignore_missing: true
+  - rename:
+      tag: rename_source_as_asn
+      field: source.as.asn
+      target_field: source.as.number
+      ignore_missing: true
+  - rename:
+      tag: rename_source_as_organization_name
+      field: source.as.organization_name
+      target_field: source.as.organization.name
+      ignore_missing: true
+  - rename:
+      tag: rename_destination_as_asn
+      field: destination.as.asn
+      target_field: destination.as.number
+      ignore_missing: true
+  - rename:
+      tag: rename_destination_as_organization_name
+      field: destination.as.organization_name
+      target_field: destination.as.organization.name
+      ignore_missing: true
+
+  # Related fields.
+  - append:
+      tag: append_source_ip_to_related_ip
+      field: related.ip
+      value: '{{{source.ip}}}'
+      allow_duplicates: false
+      if: ctx.source?.ip != null
+  - append:
+      tag: append_destination_ip_to_related_ip
+      field: related.ip
+      value: '{{{destination.ip}}}'
+      allow_duplicates: false
+      if: ctx.destination?.ip != null
+  - append:
+      tag: append_target_ip_to_related_ip
+      field: related.ip
+      value: '{{{_tmp.target_related_ip}}}'
+      allow_duplicates: false
+      if: ctx._tmp?.target_related_ip != null
+  - append:
+      tag: append_user_name_to_related_user
+      field: related.user
+      value: '{{{user.name}}}'
+      allow_duplicates: false
+      if: ctx.user?.name != null
+  - append:
+      tag: append_user_id_to_related_user
+      field: related.user
+      value: '{{{user.id}}}'
+      allow_duplicates: false
+      if: ctx.user?.id != null
+  - append:
+      tag: append_target_account_to_related_user
+      field: related.user
+      value: '{{{idira_privilege_cloud.audit.target_account}}}'
+      allow_duplicates: false
+      if: ctx.idira_privilege_cloud?.audit?.target_account != null
+
+  # ECS categorization: event.category, event.type and event.outcome.
+  - pipeline:
+      tag: pipeline_ecs_categorization
+      name: '{{ IngestPipeline "ecs-categorization" }}'
+
+  - remove:
+      tag: remove_temporary_fields
+      field:
+        - json
+        - _tmp
+      ignore_missing: true
+  - append:
+      tag: append_preserve_original_event_on_error
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false
+      if: ctx.error?.message != null
+on_failure:
+  - append:
+      tag: append_error_message
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{{#_ingest.on_failure_processor_tag}}}with tag '{{{ _ingest.on_failure_processor_tag }}}'
+        {{{/_ingest.on_failure_processor_tag}}}in pipeline '{{{ _ingest.on_failure_pipeline }}}'
+        failed with message '{{{ _ingest.on_failure_message }}}'
+  - set:
+      tag: set_pipeline_error_to_event_kind
+      field: event.kind
+      value: pipeline_error
+  - append:
+      tag: append_preserve_original_event_on_failure
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false

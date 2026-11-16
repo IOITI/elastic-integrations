@@ -1,0 +1,167 @@
+interval: {{interval}}
+resource.tracer:
+  enabled: {{enable_request_tracer}}
+  filename: "../../logs/cel/http-request-trace-*.ndjson"
+  maxbackups: 5
+{{#if proxy_url}}
+resource.proxy_url: {{proxy_url}}
+{{/if}}
+{{#if ssl}}
+resource.ssl: {{ssl}}
+{{/if}}
+{{#if http_client_timeout}}
+resource.timeout: {{http_client_timeout}}
+{{/if}}
+resource.url: {{url}}
+resource.headers:
+  Content-Type:
+    - application/json
+# The Audit API can be called once a minute. resource.rate_limit spaces every
+# Audit API request, but transport retries run inside the HTTP client and are
+# not rate limited, so they are disabled: a failed request ends the cycle with
+# an error and the window is queried again from cursor.window_end at the next
+# interval.
+resource.rate_limit.limit: {{resource_rate_limit_limit}}
+resource.rate_limit.burst: 1
+resource.retry.max_attempts: 1
+auth.oauth2:
+  client.id: {{escape_string client_id}}
+  client.secret: {{escape_string client_secret}}
+{{#if token_url}}
+  token_url: {{token_url}}
+{{else}}
+  token_url: https://{{identity_id}}.{{#if use_idaptive_domain}}my.idaptive.app{{else}}id.cyberark.cloud{{/if}}/oauth2/token/{{identity_application_id}}
+{{/if}}
+  scopes:
+    - isp.audit.events:read
+state:
+  api_key: {{escape_string api_key}}
+  page_size: {{page_size}}
+  initial_interval: {{initial_interval}}
+  query_delay: {{query_delay}}
+redact:
+  fields:
+    - api_key
+program: |-
+  (
+    // The Audit API allows one call per minute, so each evaluation makes exactly
+    // one call and resource.rate_limit spaces the calls. Without an in-flight
+    // query, createQuery for [cursor.window_end, now - query_delay] and keep its
+    // cursorRef in state.query. The window ends query_delay behind now because
+    // audit records can take several minutes to become available and a
+    // committed window is never queried again. With an in-flight query, fetch
+    // the next results page; an empty data array ends the query and commits its
+    // end as cursor.window_end. state.query is session state, not cursor state:
+    // after a restart or an API error the window is queried again from
+    // cursor.window_end, never skipped.
+    has(state.query) ?
+      // In-flight query: fetch its next results page.
+      {
+        "path": "/api/audits/stream/results",
+        "body": {"cursorRef": state.query.cursor_ref},
+        "end": state.query.end,
+      }
+    :
+      // New query window. The API only serves the previous 7 days: start no
+      // earlier than 167h ago.
+      {
+        "start": [
+          state.?cursor.window_end.optMap(t, timestamp(t)).orValue(now - duration(state.query_delay) - duration(state.initial_interval)),
+          now - duration("167h"),
+        ].max(),
+        "end": now - duration(state.query_delay),
+      }.as(window,
+        (window.start < window.end) ?
+          {
+            "path": "/api/audits/stream/createQuery",
+            "body": {
+              "query": {
+                "pageSize": int(state.page_size),
+                "filterModel": {
+                  // Audit API date format (UTC assumed; the timezone is undocumented).
+                  "date": {
+                    "dateFrom": window.start.format("2006-01-02 15:04:05"),
+                    "dateTo": window.end.format("2006-01-02 15:04:05"),
+                  },
+                  "applicationCode": [{"op": "include", "params": ["PAM"]}],
+                },
+              },
+            },
+            "end": string(window.end),
+          }
+        :
+          // cursor.window_end is not before now - query_delay, for example after
+          // query_delay was increased: there is no window to query yet.
+          {}
+      )
+  ).as(req,
+    !has(req.path) ?
+      // Skip this cycle without a request; the cursor is left unchanged.
+      state.with({"events": [], "want_more": false})
+    :
+      state.drop("query").with(
+        request("POST", state.url.trim_right("/") + req.path).with(
+          {
+            "Header": {"x-api-key": [state.api_key]},
+            "Body": req.body.encode_json(),
+          }
+        ).do_request().as(resp,
+          (resp.StatusCode != 200) ?
+            {
+              "events": {
+                "error": {
+                  "code": string(resp.StatusCode),
+                  "id": string(resp.Status),
+                  "message": "POST " + req.path + ": " + (
+                    (size(resp.Body) != 0) ?
+                      string(resp.Body)
+                    :
+                      string(resp.Status) + " (" + string(resp.StatusCode) + ")"
+                  ),
+                },
+              },
+              "want_more": false,
+            }
+          :
+            // cursorRef and data are read strictly: a malformed response fails the
+            // evaluation instead of being mistaken for the end of the query.
+            resp.Body.decode_json().as(body,
+              !has(state.query) ?
+                // Query created: fetch its first page next.
+                {
+                  "events": [{"retry": true}],
+                  "query": {"end": req.end, "cursor_ref": body.cursorRef},
+                  "want_more": true,
+                }
+              : (size(body.data) != 0) ?
+                {
+                  "events": body.data.map(e, {"message": e.encode_json()}),
+                  "query": {"end": req.end, "cursor_ref": body.?paging.cursor.cursorRef.orValue("")},
+                  "want_more": true,
+                }
+              :
+                // Empty page: the query is drained, commit its end.
+                {
+                  "events": [{"retry": true}],
+                  "cursor": {"window_end": req.end},
+                  "want_more": false,
+                }
+            )
+        )
+      )
+  )
+tags:
+{{#if preserve_original_event}}
+  - preserve_original_event
+{{/if}}
+{{#each tags as |tag|}}
+  - {{tag}}
+{{/each}}
+{{#contains "forwarded" tags}}
+publisher_pipeline.disable_host: true
+{{/contains}}
+processors:
+- drop_event.when.equals.retry: true
+{{#if processors}}
+{{processors}}
+{{/if}}

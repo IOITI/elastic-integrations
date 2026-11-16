@@ -1,0 +1,435 @@
+---
+description: >-
+  Sets the ECS categorization fields of Idira Privilege Cloud audit records from the
+  audit code, with the action type as a fallback for unknown codes, and event.outcome
+  from the audit type.
+processors:
+  - script:
+      tag: script_set_ecs_categorization
+      lang: painless
+      description: >-
+        Looks up event.category, event.type and event.outcome by audit code (event.code).
+        Codes that are not in the published Privilege Cloud catalog fall back to a lookup
+        by action type. An explicit failure or success audit type overrides the outcome
+        derived from the code; an informational audit type leaves it as it is.
+      params:
+        failure_audit_types:
+          - failure
+          - error
+          - system error
+          - user error
+        success_audit_types:
+          - success
+        # Fallback by actionType (lowercase) for audit codes that are not listed below.
+        action_types:
+          approve: {category: [iam], type: [admin, change]}
+          connect: {category: [session], type: [start]}
+          create: {category: [iam], type: [creation]}
+          delete: {category: [iam], type: [deletion]}
+          deny: {category: [iam], type: [admin, change]}
+          disable: {category: [iam], type: [change]}
+          edit: {category: [iam], type: [change]}
+          enable: {category: [iam], type: [change]}
+          end: {category: [session], type: [end]}
+          execute: {category: [process], type: [start]}
+          login: {category: [authentication], type: [start]}
+          logout: {category: [authentication], type: [end]}
+          password: {category: [iam], type: [user, change]}
+          retrieve: {category: [iam], type: [info]}
+          rotate: {category: [iam], type: [user, change]}
+          start: {category: [session], type: [start]}
+          submit: {category: [iam], type: [admin, creation]}
+          view: {category: [iam], type: [info]}
+        # Privilege Cloud (PAM) audit codes, grouped by the domains of the published catalog.
+        # An outcome is only set where the code description states the result, or where
+        # every failure has its own code so the code is only emitted on success (Logon,
+        # Logoff, PSM Connect and PSM Disconnect, as in the cyberarkpas package).
+        codes:
+          # Privileged account management audit codes
+          PAM22: {category: [iam], type: [user, info]}  # CPM Verify Password
+          PAM24: {category: [iam], type: [user, change]}  # CPM Change Password
+          PAM31: {category: [iam], type: [user, change]}  # CPM Reconcile Password
+          PAM38: {category: [iam], type: [user, info], outcome: failure}  # CPM Verify Password Failure
+          PAM44: {category: [iam], type: [admin, creation], outcome: failure}  # Store File (Unauthorized)
+          PAM45: {category: [iam], type: [admin, creation], outcome: failure}  # Store File (Unauthorized)
+          PAM46: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete File (Unauthorized)
+          PAM47: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete File (Unauthorized)
+          PAM50: {category: [iam], type: [admin, creation]}  # Store File
+          PAM51: {category: [iam], type: [admin, info], outcome: success}  # Retrieve File succeeded
+          PAM52: {category: [iam], type: [admin, deletion]}  # Delete File
+          PAM57: {category: [iam], type: [user, change], outcome: failure}  # CPM Change Password Failure
+          PAM60: {category: [iam], type: [user, change], outcome: failure}  # CPM Reconcile Password Failure
+          PAM88: {category: [iam], type: [user, change]}  # Set Password
+          PAM89: {category: [iam], type: [user, change], outcome: failure}  # Set Password (Incorrect Password)
+          PAM98: {category: [iam], type: [admin, info]}  # Open File (Write Only)
+          PAM99: {category: [iam], type: [admin, info]}  # Open File
+          PAM100: {category: [iam], type: [admin, info], outcome: failure}  # Open File (Unauthorized)
+          PAM101: {category: [iam], type: [admin, info], outcome: failure}  # Open File (Unauthorized)
+          PAM105: {category: [iam], type: [admin, creation]}  # Add File Category
+          PAM106: {category: [iam], type: [admin, change]}  # Update File Category
+          PAM107: {category: [iam], type: [admin, deletion]}  # Delete File Category
+          PAM121: {category: [iam], type: [admin, change]}  # Move File
+          PAM123: {category: [iam], type: [admin, change]}  # Move File
+          PAM122: {category: [iam], type: [admin, change]}  # Undelete File
+          PAM124: {category: [iam], type: [admin, change]}  # Rename File
+          PAM125: {category: [iam], type: [admin, change]}  # Rename File
+          PAM126: {category: [iam], type: [admin, change]}  # Unlock File
+          PAM130: {category: [iam], type: [user, change], outcome: failure}  # CPM Disable Password Failure
+          PAM132: {category: [iam], type: [admin, creation], outcome: failure}  # Add Safe Event (Unauthorized )
+          PAM133: {category: [iam], type: [admin, creation], outcome: failure}  # Add Safe Event (Unauthorized )
+          PAM134: {category: [iam], type: [admin, info], outcome: failure}  # Get Safe Events List (Unauthorized )
+          PAM135: {category: [iam], type: [admin, info], outcome: failure}  # Get Safe Events List (Unauthorized )
+          PAM136: {category: [iam], type: [user, change]}  # CPM Release Password
+          PAM137: {category: [iam], type: [user, change], outcome: failure}  # CPM Release Password Failure
+          PAM138: {category: [iam], type: [admin, change]}  # Rename Folder
+          PAM140: {category: [iam], type: [admin, change]}  # Rename Folder
+          PAM139: {category: [iam], type: [admin, change]}  # Move Folder
+          PAM141: {category: [iam], type: [admin, change]}  # Move Folder
+          PAM152: {category: [iam], type: [admin, creation], outcome: failure}  # Add Folder (Unauthorized)
+          PAM153: {category: [iam], type: [admin, creation], outcome: failure}  # Add Folder (Unauthorized)
+          PAM154: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Folder (Unauthorized)
+          PAM155: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Folder (Unauthorized)
+          PAM158: {category: [iam], type: [admin, change], outcome: failure}  # Move/Rename Folder (Unauthorized)
+          PAM159: {category: [iam], type: [admin, change], outcome: failure}  # Move/Rename Folder (Unauthorized)
+          PAM160: {category: [iam], type: [admin, change], outcome: failure}  # Move File (Unauthorized)
+          PAM161: {category: [iam], type: [admin, change], outcome: failure}  # Move File (Unauthorized)
+          PAM162: {category: [iam], type: [admin, change], outcome: failure}  # Undelete File (Unauthorized)
+          PAM163: {category: [iam], type: [admin, change], outcome: failure}  # Undelete File (Unauthorized)
+          PAM164: {category: [iam], type: [admin, change], outcome: failure}  # Rename File (Unauthorized)
+          PAM165: {category: [iam], type: [admin, change], outcome: failure}  # Rename File (Unauthorized)
+          PAM166: {category: [iam], type: [admin, change], outcome: failure}  # Unlock File (Unauthorized)
+          PAM167: {category: [iam], type: [admin, change], outcome: failure}  # Unlock File (Unauthorized)
+          PAM187: {category: [iam], type: [admin, creation]}  # Add Folder
+          PAM188: {category: [iam], type: [admin, deletion]}  # Delete Folder
+          PAM189: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Folder (Has Unexpired Files)
+          PAM198: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Folder (Has Locked Files)
+          PAM205: {category: [iam], type: [admin, creation], outcome: failure}  # Store File (Wrong Key)
+          PAM272: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Folder (Folder not Empty)
+          PAM294: {category: [iam], type: [user, change]}  # Store password
+          PAM333: {category: [configuration], type: [creation], outcome: failure}  # Add Privileged Command failed on account
+          PAM334: {category: [configuration], type: [creation], outcome: success}  # Add Privileged Command succeeded
+          PAM336: {category: [configuration], type: [deletion], outcome: failure}  # Delete Privileged Command failed on account
+          PAM337: {category: [configuration], type: [deletion], outcome: success}  # Delete Privileged Command succeeded
+          PAM338: {category: [configuration], type: [creation], outcome: failure}  # Add Privileged Command failed on policy
+          PAM340: {category: [configuration], type: [creation], outcome: success}  # Add Privileged Command succeeded
+          PAM341: {category: [configuration], type: [deletion], outcome: failure}  # Delete Privileged Command failed
+          PAM343: {category: [configuration], type: [deletion], outcome: success}  # Delete Privileged Command succeeded
+          PAM350: {category: [configuration], type: [change], outcome: failure}  # Update Privileged Command failed on account
+          PAM351: {category: [configuration], type: [change]}  # Update Privileged Command
+          PAM352: {category: [configuration], type: [change], outcome: failure}  # Update Privileged Command failed on policy
+          PAM354: {category: [configuration], type: [change]}  # Update Privileged Command
+          PAM378: {category: [session], type: [start]}  # PSM Secure Connect Session Start
+          PAM379: {category: [session], type: [start], outcome: failure}  # PSM Secure Connect Session Start Failed
+          PAM380: {category: [session], type: [end]}  # PSM Secure Connect Session End
+          PAM381: {category: [session], type: [end], outcome: failure}  # PSM Secure Connect Session End Failed
+          PAM414: {category: [iam], type: [user, info]}  # CPM Verify SSH Key
+          PAM415: {category: [iam], type: [user, info], outcome: failure}  # CPM Verify SSH Key Failed
+          PAM416: {category: [iam], type: [user, change]}  # CPM Rotate SSH Key
+          PAM417: {category: [iam], type: [user, change], outcome: failure}  # CPM Rotate SSH Key Failed
+          PAM418: {category: [iam], type: [user, change]}  # CPM Reconcile SSH Key
+          PAM419: {category: [iam], type: [user, change], outcome: failure}  # CPM Reconcile SSH Key Failed
+          PAM420: {category: [iam], type: [user, change]}  # CPM Release SSH Key
+          PAM421: {category: [iam], type: [user, change], outcome: failure}  # CPM Release SSH Key Failed
+          PAM425: {category: [iam], type: [user, change], outcome: success}  # CPM Disable SSH Key Succeeded
+          PAM426: {category: [iam], type: [user, change]}  # CPM Disable SSH Key
+          PAM434: {category: [iam], type: [user, change], outcome: success}  # CPM has deleted the public SSH key
+          PAM435: {category: [iam], type: [user, change], outcome: failure}  # CPM failed to delete the SSH key
+          # Approval audit codes
+          PAM36: {category: [iam], type: [admin, change]}  # Confirm Open Safe
+          PAM37: {category: [iam], type: [admin, change]}  # Confirm Get FIle
+          PAM108: {category: [iam], type: [admin, creation]}  # Open Safe Request
+          PAM109: {category: [iam], type: [admin, creation]}  # Get File Request
+          PAM111: {category: [iam], type: [admin, deletion]}  # Delete Open Safe Request
+          PAM112: {category: [iam], type: [admin, deletion]}  # Delete Get File Request
+          PAM114: {category: [iam], type: [admin, change]}  # Last Required Confirmation To Open Safe Given
+          PAM115: {category: [iam], type: [admin, change]}  # Last Required Confirmation To Get File Given
+          PAM116: {category: [iam], type: [admin, change], outcome: failure}  # Confirmation Status Failure
+          PAM117: {category: [iam], type: [admin, change], outcome: failure}  # Confirmation Status Failure
+          PAM118: {category: [iam], type: [admin, change]}  # Reject Open Safe Request
+          PAM119: {category: [iam], type: [admin, change]}  # Reject Get File Request
+          PAM127: {category: [iam], type: [admin, change]}  # Hide Open Safe Request
+          PAM128: {category: [iam], type: [admin, change]}  # Hide Get File Request
+          # Privileged account access audit codes
+          PAM23: {category: [iam], type: [admin, info]}  # Action On Closed Safe
+          PAM25: {category: [iam], type: [admin, info], outcome: failure}  # Open/Close Safe (Unauthorized)
+          PAM26: {category: [iam], type: [admin, info], outcome: failure}  # Open/Close Safe (Unauthorized)
+          PAM27: {category: [iam], type: [admin, info]}  # Open Safe (Unsecured Station)
+          PAM40: {category: [iam], type: [admin, info], outcome: failure}  # List Files (Unauthorized)
+          PAM41: {category: [iam], type: [admin, info], outcome: failure}  # List Files (Unauthorized)
+          PAM42: {category: [iam], type: [admin, info], outcome: failure}  # Retrieve File (Unauthorized)
+          PAM43: {category: [iam], type: [admin, info], outcome: failure}  # Retrieve File (Unauthorized)
+          PAM55: {category: [iam], type: [admin, info], outcome: failure}  # Find Files (Unauthorized)
+          PAM56: {category: [iam], type: [admin, info], outcome: failure}  # Find Files (Unauthorized)
+          PAM204: {category: [iam], type: [admin, info], outcome: failure}  # Retrieve File (Wrong Key)
+          PAM295: {category: [iam], type: [user, info]}  # Retrieve password
+          PAM296: {category: [iam], type: [admin, info]}  # Open Safe
+          PAM300: {category: [session], type: [start], outcome: success}  # PSM Connect
+          PAM301: {category: [session], type: [start], outcome: failure}  # PSM Connect Failed
+          PAM302: {category: [session], type: [end], outcome: success}  # PSM Disconnect
+          PAM303: {category: [session], type: [end], outcome: failure}  # PSM Disconnect Failed
+          PAM304: {category: [session], type: [info]}  # PSM Upload Recording
+          PAM306: {category: [iam], type: [user, info], outcome: failure}  # Use Password (Unauthorized)
+          PAM307: {category: [iam], type: [user, info], outcome: failure}  # Use Password (Unauthorized)
+          PAM308: {category: [iam], type: [user, info]}  # Use Password
+          PAM319: {category: [iam], type: [user, info]}  # Retrieve password (From Provider)
+          PAM320: {category: [iam], type: [user, info], outcome: failure}  # Retrieve password (From Provider) Failure
+          PAM344: {category: [process], type: [start]}  # Privileged command initiated
+          PAM345: {category: [process], type: [start], outcome: failure}  # Privileged command initiation failed
+          PAM346: {category: [process], type: [end]}  # Privileged command completed
+          PAM347: {category: [process], type: [start], outcome: failure}  # OPM failed to execute privileged command
+          PAM348: {category: [session], type: [info]}  # PIMSu recording uploaded
+          PAM359: {category: [database], type: [access]}  # SQL command
+          PAM361: {category: [session], type: [info]}  # SSH Command
+          PAM362: {category: [session], type: [info], outcome: failure}  # Keystroke logging audit failed
+          PAM372: {category: [session], type: [end]}  # Terminate Session
+          PAM373: {category: [session], type: [end], outcome: failure}  # Terminate Session Failed
+          PAM374: {category: [session], type: [start]}  # Monitor Session Start
+          PAM375: {category: [session], type: [start], outcome: failure}  # Monitor Session Start Failed
+          PAM376: {category: [session], type: [end]}  # Monitor Session End
+          PAM377: {category: [session], type: [end], outcome: failure}  # Monitor Session End Failed
+          PAM411: {category: [session], type: [info]}  # PSM Window Titles
+          PAM412: {category: [session], type: [info]}  # Keystroke logging
+          PAM436: {category: [session], type: [info]}  # SCP Command
+          PAM437: {category: [session], type: [info]}  # SCP Directory Copy
+          PAM438: {category: [session], type: [info]}  # SCP File Copy
+          PAM439: {category: [session], type: [info], outcome: failure}  # SCP Failure
+          PAM459: {category: [iam], type: [info]}  # General audit message
+          PAM462: {category: [iam], type: [user, change]}  # Password sent to endpoint
+          PAM463: {category: [iam], type: [user, change], outcome: success}  # Agent successfully changed the password for account
+          PAM464: {category: [iam], type: [user, change], outcome: failure}  # Agent failed to change the password for account
+          PAM471: {category: [iam], type: [user, change], outcome: success}  # Grant Administrative Access Succeeded
+          PAM472: {category: [iam], type: [user, change], outcome: failure}  # Grant Administrative Access Failed
+          PAM473: {category: [iam], type: [user, change], outcome: success}  # Remove Administrative Access Succeeded
+          PAM474: {category: [iam], type: [user, change], outcome: failure}  # Remove Administrative Access Failed
+          # Safe and Safe member management audit codes
+          PAM32: {category: [iam], type: [admin, change]}  # Add Owner
+          PAM33: {category: [iam], type: [admin, change]}  # Update Owner
+          PAM142: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Safe Failure
+          PAM145: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Safe (Has Locked Files)
+          PAM146: {category: [iam], type: [admin, change], outcome: failure}  # Update Safe (Unauthorized)
+          PAM147: {category: [iam], type: [admin, change], outcome: failure}  # Update Safe (Unauthorized)
+          PAM148: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Safe (Unauthorized )
+          PAM149: {category: [iam], type: [admin, deletion]}  # Delete Safe
+          PAM168: {category: [iam], type: [admin, change], outcome: failure}  # Clear Expired History (Unauthorized)
+          PAM169: {category: [iam], type: [admin, change], outcome: failure}  # Clear Expired History (Unauthorized)
+          PAM170: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Safe (Has Unexpired Files)
+          PAM181: {category: [iam], type: [admin, change]}  # Update Safe
+          PAM183: {category: [iam], type: [admin, deletion]}  # Delete Safe
+          PAM185: {category: [iam], type: [admin, creation]}  # Add Safe
+          PAM196: {category: [iam], type: [admin, change], outcome: failure}  # Update Owners (Unauthorized)
+          PAM197: {category: [iam], type: [admin, change], outcome: failure}  # Update Owners (Unauthorized)
+          PAM207: {category: [iam], type: [admin, change], outcome: failure}  # Compress Safe (Unauthorized)
+          PAM208: {category: [iam], type: [admin, change], outcome: failure}  # Compress Safe (Unauthorized)
+          PAM209: {category: [iam], type: [admin, change]}  # Compress Safe
+          PAM221: {category: [iam], type: [admin, change]}  # Ownership Expired
+          PAM243: {category: [iam], type: [admin, change], outcome: failure}  # Update user safe options (Unauthorized)
+          PAM244: {category: [iam], type: [admin, change], outcome: failure}  # Update user safe options (Unauthorized)
+          PAM273: {category: [iam], type: [admin, change]}  # Remove Owner
+          PAM290: {category: [iam], type: [admin, change]}  # Auto Clear Safes History start
+          PAM291: {category: [iam], type: [admin, change]}  # Auto Clear Safes History end
+          # User group and location management audit codes
+          PAM0: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Directory Map (Unauthorized)
+          PAM1: {category: [iam], type: [admin, deletion]}  # Delete Directory Map
+          PAM2: {category: [iam], type: [user, creation]}  # Add External User
+          PAM10: {category: [iam], type: [user, change], outcome: failure}  # Update user station (Unauthorized)
+          PAM16: {category: [iam], type: [user, change], outcome: failure}  # Update Your Trusted Network Areas (Unauthorized)
+          PAM58: {category: [iam], type: [user, change]}  # Clear User History
+          PAM63: {category: [iam], type: [user, change], outcome: failure}  # Rename User (Unauthorized)
+          PAM65: {category: [iam], type: [user, change], outcome: failure}  # Rename User (Unauthorized)
+          PAM64: {category: [iam], type: [user, change]}  # Rename User
+          PAM66: {category: [iam], type: [user, change]}  # Rename User
+          PAM68: {category: [iam], type: [user, change]}  # Update Trusted User
+          PAM69: {category: [iam], type: [admin, creation]}  # Add Location
+          PAM70: {category: [iam], type: [admin, creation], outcome: failure}  # Add Location (Unauthorized)
+          PAM71: {category: [iam], type: [admin, change]}  # Update Location
+          PAM72: {category: [iam], type: [admin, change], outcome: failure}  # Update Location (Unauthorized)
+          PAM73: {category: [iam], type: [admin, deletion]}  # Delete Location
+          PAM74: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Location (Unauthorized)
+          PAM78: {category: [iam], type: [admin, change], outcome: failure}  # Rename/Move Location (Unauthorized)
+          PAM79: {category: [iam], type: [admin, change]}  # Rename/Move Location
+          PAM80: {category: [iam], type: [group, creation]}  # Add External Group
+          PAM82: {category: [iam], type: [user, change], outcome: failure}  # Clear User History (Unauthorized)
+          PAM83: {category: [iam], type: [user, change]}  # Clear User History
+          PAM120: {category: [iam], type: [admin, creation]}  # Add automatic location
+          PAM143: {category: [iam], type: [user, change]}  # Store Picture
+          PAM144: {category: [iam], type: [user, change]}  # Delete Picture
+          PAM171: {category: [iam], type: [user, change], outcome: failure}  # Update Picture (Unauthorized)
+          PAM172: {category: [iam], type: [user, change], outcome: failure}  # Update Your Picture (Unauthorized)
+          PAM173: {category: [iam], type: [user, creation], outcome: failure}  # Add User (Unauthorized)
+          PAM174: {category: [iam], type: [user, change], outcome: failure}  # Update User (Unauthorized)
+          PAM175: {category: [iam], type: [user, change], outcome: failure}  # Update Your User (Unauthorized)
+          PAM176: {category: [iam], type: [user, deletion], outcome: failure}  # Delete User (Unauthorized)
+          PAM177: {category: [iam], type: [user, deletion], outcome: failure}  # Delete Your User (Unauthorized)
+          PAM178: {category: [iam], type: [user, info], outcome: failure}  # Get User's Details (Unauthorized)
+          PAM179: {category: [iam], type: [user, info], outcome: failure}  # Get Your User's Details (Unauthorized)
+          PAM180: {category: [iam], type: [user, creation]}  # Add User
+          PAM182: {category: [iam], type: [user, change]}  # Update User
+          PAM184: {category: [iam], type: [user, deletion]}  # Delete User
+          PAM186: {category: [iam], type: [user, info], outcome: failure}  # Get UserDetails By Identifier (Unauthorized User)
+          PAM206: {category: [iam], type: [admin], outcome: failure}  # External Object Operation (Unauthorized)
+          PAM211: {category: [iam], type: [user, change]}  # Update User Detailed Information
+          PAM214: {category: [iam], type: [admin, creation], outcome: failure}  # Add Directory Map LDAP Branch (Unauthorized)
+          PAM215: {category: [iam], type: [admin, change], outcome: failure}  # Update Directory Map LDAP Branch (Unauthorized)
+          PAM216: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Directory Map LDAP Branch (Unauthorized)
+          PAM217: {category: [iam], type: [admin, creation]}  # Add Directory Map LDAP Branch
+          PAM218: {category: [iam], type: [admin, change]}  # Update Directory Map LDAP Branch
+          PAM219: {category: [iam], type: [admin, deletion]}  # Delete Directory Map LDAP Branch
+          PAM222: {category: [iam], type: [admin, info], outcome: failure}  # List Directory Map LDAP Branches (Unauthorized)
+          PAM237: {category: [iam], type: [admin, info], outcome: failure}  # Rules List (Unauthorized)
+          PAM238: {category: [iam], type: [admin, info], outcome: failure}  # Rules List (Unauthorized)
+          PAM239: {category: [iam], type: [admin, change]}  # Update Directory Map Detailed Information
+          PAM246: {category: [iam], type: [admin, info]}  # LDAP Synchronization start
+          PAM247: {category: [iam], type: [admin, info]}  # LDAP Synchronization end
+          PAM248: {category: [iam], type: [admin, creation], outcome: failure}  # Add Rule Failure
+          PAM249: {category: [iam], type: [admin, creation], outcome: failure}  # Add Rule Failure
+          PAM252: {category: [iam], type: [admin, change]}  # Update Directory Map
+          PAM253: {category: [iam], type: [admin, change], outcome: failure}  # Update Directory Map (Unauthorized)
+          PAM254: {category: [iam], type: [admin, creation]}  # Add Directory Map
+          PAM255: {category: [iam], type: [admin, creation], outcome: failure}  # Add Directory Map (Unauthorized)
+          PAM256: {category: [iam], type: [user, change]}  # Update External User
+          PAM257: {category: [iam], type: [group, change]}  # Update External Group
+          PAM259: {category: [iam], type: [group, change]}  # Add/Update Group
+          PAM260: {category: [iam], type: [group, change], outcome: failure}  # Add/Update Group (Unauthorized)
+          PAM261: {category: [iam], type: [group, change], outcome: failure}  # Add Group Member (Unauthorized)
+          PAM262: {category: [iam], type: [group, change], outcome: failure}  # Delete Group Member (Unauthorized)
+          PAM263: {category: [iam], type: [group, change], outcome: failure}  # Update Group (Unauthorized)
+          PAM264: {category: [iam], type: [group, change]}  # Update Group
+          PAM265: {category: [iam], type: [group, change]}  # Add Group Member
+          PAM266: {category: [iam], type: [group, change]}  # Remove Group Member
+          PAM269: {category: [iam], type: [group, deletion], outcome: failure}  # Delete Group (Unauthorized)
+          PAM270: {category: [iam], type: [group, deletion]}  # Delete Group
+          PAM271: {category: [iam], type: [group, info], outcome: failure}  # List Group Members (Unauthorized)
+          PAM276: {category: [iam], type: [user, deletion]}  # Delete External User
+          PAM277: {category: [iam], type: [group, deletion]}  # Delete External Group
+          PAM278: {category: [iam], type: [admin, creation]}  # Add Rule
+          PAM279: {category: [iam], type: [admin, deletion]}  # Delete Rule
+          PAM280: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Rule Failure
+          PAM281: {category: [iam], type: [admin, deletion], outcome: failure}  # Delete Rule Failure
+          PAM286: {category: [iam], type: [group, change]}  # Add Group Member - Sync From Ldap
+          PAM287: {category: [iam], type: [group, change]}  # Delete Group Member - Sync From Ldap
+          PAM288: {category: [iam], type: [user, change]}  # Auto Clear Users History start
+          PAM289: {category: [iam], type: [user, change]}  # Auto Clear Users History end
+          PAM292: {category: [configuration], type: [change]}  # Auto Download Certificate Revocation List Data start
+          PAM293: {category: [configuration], type: [change]}  # Auto Download Certificate Revocation List Data end
+          PAM297: {category: [iam], type: [admin, info], outcome: failure}  # Rules List Failure
+          PAM298: {category: [iam], type: [admin, info], outcome: failure}  # Rules List Failure
+          PAM309: {category: [authentication], type: [start]}  # Undefined User Logon
+          PAM314: {category: [iam], type: [user, change], outcome: failure}  # Reset Password User (Unauthorized)
+          PAM315: {category: [iam], type: [user, change], outcome: failure}  # Reset Password Your User (Unauthorized)
+          PAM316: {category: [iam], type: [user, change]}  # Reset User Password Detailed Information
+          PAM317: {category: [iam], type: [user, change]}  # Reset User Password
+          PAM318: {category: [iam], type: [user, change]}  # Activate/Deactivate Trusted Network Areas
+          PAM440: {category: [iam], type: [user, info], outcome: failure}  # Get SSH Public Keys Failed
+          PAM441: {category: [iam], type: [user, change], outcome: success}  # Add SSH Public Keys Succeeded
+          PAM442: {category: [iam], type: [user, change], outcome: failure}  # Add SSH Public Keys Failed
+          PAM443: {category: [iam], type: [user, change], outcome: success}  # Delete SSH Public Keys Succeeded
+          PAM444: {category: [iam], type: [user, change], outcome: failure}  # Delete SSH Public Keys Failed
+          PAM484: {category: [iam], type: [user, creation], outcome: failure}  # Unauthorized attempt to create an internal user
+          PAM485: {category: [iam], type: [user, change], outcome: failure}  # Unauthorized attempt to update an internal user
+          PAM486: {category: [iam], type: [user, change], outcome: failure}  # Unauthorized attempt to reset the password for an internal user
+          PAM487: {category: [iam], type: [user, deletion], outcome: failure}  # Unauthorized attempt to delete an internal user
+          PAM489: {category: [iam], type: [user, info], outcome: success}  # Account existence validation succeeded
+          # Application management audit codes
+          PAM382: {category: [iam], type: [admin, creation]}  # Add App Authentication
+          PAM383: {category: [iam], type: [admin, deletion]}  # Delete App Authentication
+          # User login audit codes
+          PAM4: {category: [authentication], type: [start], outcome: failure}  # User Authentication Failure
+          PAM5: {category: [authentication], type: [start], outcome: failure}  # Unauthorized Station
+          PAM7: {category: [authentication, session], type: [start], outcome: success}  # Logon
+          PAM8: {category: [authentication, session], type: [end], outcome: success}  # Logoff
+          PAM15: {category: [authentication], type: [info]}  # Impersonation not by an agent
+          PAM18: {category: [authentication], type: [start], outcome: failure}  # Non authorized impersonation
+          PAM19: {category: [authentication], type: [start]}  # Full Gateway Connection
+          PAM20: {category: [authentication], type: [start]}  # Partial Gateway Connection
+          PAM21: {category: [authentication], type: [start]}  # Partial Gateway Connection (Incorrect Client Address)
+          PAM102: {category: [authentication], type: [start], outcome: failure}  # Logon Failed, User Time Limit Restriction
+          PAM103: {category: [authentication], type: [start], outcome: failure}  # Logon Failed, User Has Expired
+          PAM104: {category: [authentication], type: [start], outcome: failure}  # Logon Failed, User Is Disabled
+          PAM113: {category: [authentication], type: [start], outcome: failure}  # Cannot use station due to time limits
+          # Master policy audit codes
+          PAM385: {category: [configuration], type: [change], outcome: success}  # Changes were made successfully to the Master Policy
+          PAM386: {category: [configuration], type: [change], outcome: failure}  # Changes to the Master Policy failed
+          # Report management audit codes
+          PAM305: {category: [iam], type: [admin, info]}  # Run Report
+          PAM321: {category: [configuration], type: [creation]}  # Add Report Definition
+          PAM322: {category: [configuration], type: [change]}  # Edit Report Definition
+          PAM323: {category: [configuration], type: [deletion]}  # Delete Report Definition
+          PAM324: {category: [configuration], type: [change]}  # Hide Report
+          PAM325: {category: [iam], type: [admin, info]}  # Send Report
+          # Privileged account auto-detection audit codes
+          PAM67: {category: [iam], type: [user, creation]}  # CPM Auto Detection Add Password
+          PAM84: {category: [iam], type: [user, change]}  # CPM Auto Detection Update Password
+          PAM129: {category: [iam], type: [user, change]}  # CPM Auto Detection Archive Password
+          PAM326: {category: [iam], type: [admin, info]}  # CPM Auto Detection Start Automatic Detection
+          PAM327: {category: [iam], type: [admin, info]}  # CPM Auto Detection End Automatic Detection
+          PAM328: {category: [iam], type: [admin, creation]}  # CPM Auto Detection Add Usage
+          PAM329: {category: [iam], type: [admin, change]}  # CPM Auto Detection Update Usage
+          PAM330: {category: [iam], type: [admin, deletion]}  # CPM Auto Detection Delete Usage
+          # Privileged account discovery and provisioning audit codes
+          PAM447: {category: [configuration], type: [deletion], outcome: success}  # Delete Discovery Succeeded
+          PAM448: {category: [configuration], type: [deletion], outcome: failure}  # Delete Discovery Failed
+          PAM449: {category: [configuration], type: [creation], outcome: success}  # Create Discovery Succeeded
+          PAM450: {category: [configuration], type: [creation], outcome: failure}  # Create Discovery Failed
+          PAM451: {category: [configuration], type: [change], outcome: success}  # Stop Discovery Succeeded
+          PAM452: {category: [configuration], type: [change], outcome: failure}  # Stop Discovery Failed
+          # Component authentication audit codes
+          PAM465: {category: [iam], type: [admin, creation], outcome: success}  # The component public key for JWT authentication was created
+          PAM466: {category: [iam], type: [admin, creation], outcome: failure}  # The component public key for JWT authentication wasn't created
+          PAM467: {category: [iam], type: [admin, change], outcome: success}  # The component public key for JWT authentication was updated
+          PAM468: {category: [iam], type: [admin, change], outcome: failure}  # The component public key for JWT authentication wasn't updated
+          PAM469: {category: [iam], type: [admin, deletion], outcome: success}  # The component public key for JWT authentication was revoked
+          PAM470: {category: [iam], type: [admin, deletion], outcome: failure}  # The component public key for JWT authentication wasn't revoked
+          # Bulk operation audit codes
+          PAM480: {category: [iam], type: [admin, creation], outcome: success}  # Create new Add Account Bulk Operation succeeded
+          PAM481: {category: [iam], type: [admin, creation], outcome: failure}  # Create new Add Account Bulk Operation failed
+          PAM482: {category: [iam], type: [admin, change], outcome: success}  # Update existing Add Account Bulk Operation succeeded
+          PAM483: {category: [iam], type: [admin, change], outcome: failure}  # Update existing Add Account Bulk Operation failed
+          # IP Allowlist audit codes
+          PAM0501: {category: [configuration], type: [change]}  # Configure IP Allowlist
+          PAM501: {category: [configuration], type: [change]}  # Configure IP Allowlist (code without the leading zero)
+      source: |-
+        Map mapping = null;
+        if (ctx.event != null && ctx.event.code instanceof String) {
+          String code = ctx.event.code.trim().toUpperCase();
+          int space = code.indexOf(' ');
+          if (space > 0) {
+            code = code.substring(0, space);
+          }
+          mapping = params.codes.get(code);
+        }
+        Map audit = null;
+        if (ctx.idira_privilege_cloud instanceof Map && ctx.idira_privilege_cloud.audit instanceof Map) {
+          audit = ctx.idira_privilege_cloud.audit;
+        }
+        if (mapping == null && audit != null && audit.action_type instanceof String) {
+          mapping = params.action_types.get(audit.action_type.trim().toLowerCase());
+        }
+        if (ctx.event == null) {
+          ctx.event = new HashMap();
+        }
+        String outcome = null;
+        if (mapping != null) {
+          ctx.event.category = new ArrayList(mapping.category);
+          ctx.event.type = new ArrayList(mapping.type);
+          outcome = mapping.outcome;
+        }
+        if (audit != null && audit.audit_type instanceof String) {
+          String auditType = audit.audit_type.trim().toLowerCase();
+          if (params.failure_audit_types.contains(auditType)) {
+            outcome = 'failure';
+          } else if (params.success_audit_types.contains(auditType)) {
+            outcome = 'success';
+          }
+        }
+        if (outcome != null) {
+          ctx.event.outcome = outcome;
+        }
+on_failure:
+  - append:
+      tag: append_categorization_error_message
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{{#_ingest.on_failure_processor_tag}}}with tag '{{{ _ingest.on_failure_processor_tag }}}'
+        {{{/_ingest.on_failure_processor_tag}}}in pipeline '{{{ _ingest.on_failure_pipeline }}}'
+        failed with message '{{{ _ingest.on_failure_message }}}'

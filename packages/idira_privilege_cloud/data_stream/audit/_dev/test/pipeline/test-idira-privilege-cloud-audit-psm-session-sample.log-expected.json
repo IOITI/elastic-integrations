@@ -1,0 +1,224 @@
+{
+    "expected": [
+        {
+            "@timestamp": "2026-10-19T10:35:00.982Z",
+            "destination": {
+                "as": {
+                    "number": 64502,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Madrid",
+                    "continent_name": "Europe",
+                    "country_iso_code": "ES",
+                    "country_name": "Spain",
+                    "location": {
+                        "lat": 40.41639,
+                        "lon": -3.7025
+                    },
+                    "region_iso_code": "ES-M",
+                    "region_name": "Madrid"
+                },
+                "ip": "203.0.113.15"
+            },
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "PSM Connect",
+                "category": [
+                    "session"
+                ],
+                "code": "PAM300",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e14",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"PSM\",\"accountId\":\"45_7\",\"accountName\":\"Operating System-WinDomain-example.com-admin_user\",\"action\":\"PSM Connect\",\"actionType\":\"Connect\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":1792406101250,\"auditCode\":\"PAM300\",\"auditType\":\"Info\",\"checksum\":\"9b2f6c1e4d8a7b3c5e0f1a2b3c4d5e6f\",\"cloudAssets\":[\"arn:aws:ec2:us-east-1:000000000000:instance/i-0123456789abcdef0\"],\"cloudIdentities\":[\"arn:aws:iam::000000000000:role/example-role\"],\"cloudProvider\":\"aws\",\"cloudRoles\":[\"example-role\"],\"cloudWorkspaces\":[\"000000000000\"],\"cloudWorkspacesAndRoles\":[{\"name\":\"000000000000\",\"roles\":[\"example-role\",\"example-readonly-role\"]}],\"command\":\"mstsc /v:203.0.113.15\",\"component\":\"PSM\",\"correlationId\":\"6c5b4a39-2817-4f6e-9d5c-4b3a2f1e0d14\",\"customData\":null,\"identityType\":\"HUMAN\",\"message\":\"User jdoe@example.com connected to 203.0.113.15 with account admin_user through PSM\",\"safe\":\"Windows-Servers\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":\"2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d14\",\"source\":\"2001:db8::10\",\"target\":\"203.0.113.15\",\"targetAccount\":\"admin_user\",\"targetPlatform\":\"WinDomain\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792406100982,\"userId\":\"c1a2b3d4-e5f6-4789-8abc-def012345678\",\"username\":\"jdoe@example.com\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e14\",\"vaultedAccounts\":[\"Operating System-WinDomain-example.com-admin_user\"],\"customEventData\":[{\"title\":\"Protocol\",\"value\":\"RDP\"},{\"title\":\"Target Ip\",\"value\":\"203.0.113.15\"},{\"title\":\"Connection Component\",\"value\":\"PSM-RDP\"},{\"title\":\"Connection Component\",\"value\":\"PSM-RDP-Fallback\"},{\"title\":\"Recording\",\"value\":\"\"}]}",
+                "outcome": "success",
+                "type": [
+                    "start"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "PSM",
+                    "account_id": "45_7",
+                    "account_name": "Operating System-WinDomain-example.com-admin_user",
+                    "action_type": "Connect",
+                    "application_code": "PAM",
+                    "arrival_timestamp": "2026-10-19T10:35:01.250Z",
+                    "audit_type": "Info",
+                    "checksum": "9b2f6c1e4d8a7b3c5e0f1a2b3c4d5e6f",
+                    "cloud_assets": [
+                        "arn:aws:ec2:us-east-1:000000000000:instance/i-0123456789abcdef0"
+                    ],
+                    "cloud_identities": [
+                        "arn:aws:iam::000000000000:role/example-role"
+                    ],
+                    "cloud_provider": "aws",
+                    "cloud_roles": [
+                        "example-role"
+                    ],
+                    "cloud_workspaces": [
+                        "000000000000"
+                    ],
+                    "cloud_workspaces_and_roles": [
+                        {
+                            "name": "000000000000",
+                            "roles": [
+                                "example-role",
+                                "example-readonly-role"
+                            ]
+                        }
+                    ],
+                    "command": "mstsc /v:203.0.113.15",
+                    "component": "PSM",
+                    "correlation_id": "6c5b4a39-2817-4f6e-9d5c-4b3a2f1e0d14",
+                    "custom_event_data": {
+                        "Connection Component": [
+                            "PSM-RDP",
+                            "PSM-RDP-Fallback"
+                        ],
+                        "Protocol": "RDP",
+                        "Target Ip": "203.0.113.15"
+                    },
+                    "identity_type": "HUMAN",
+                    "safe": "Windows-Servers",
+                    "service_name": "Privilege Cloud",
+                    "session_id": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d14",
+                    "target": "203.0.113.15",
+                    "target_account": "admin_user",
+                    "target_platform": "WinDomain",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f",
+                    "vaulted_accounts": [
+                        "Operating System-WinDomain-example.com-admin_user"
+                    ]
+                }
+            },
+            "message": "User jdoe@example.com connected to 203.0.113.15 with account admin_user through PSM",
+            "related": {
+                "ip": [
+                    "2001:db8::10",
+                    "203.0.113.15"
+                ],
+                "user": [
+                    "jdoe@example.com",
+                    "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                    "admin_user"
+                ]
+            },
+            "source": {
+                "as": {
+                    "number": 65551,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Greenwich",
+                    "continent_name": "Europe",
+                    "country_iso_code": "GB",
+                    "country_name": "United Kingdom",
+                    "location": {
+                        "lat": 51.47687,
+                        "lon": -4.1E-4
+                    },
+                    "region_iso_code": "GB-ENG",
+                    "region_name": "England"
+                },
+                "ip": "2001:db8::10"
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "id": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "name": "jdoe@example.com"
+            }
+        },
+        {
+            "@timestamp": "2026-10-19T10:36:00.411Z",
+            "ecs": {
+                "version": "9.3.0"
+            },
+            "event": {
+                "action": "PSM Connect Failed",
+                "category": [
+                    "session"
+                ],
+                "code": "PAM301",
+                "id": "0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e15",
+                "kind": "event",
+                "original": "{\"accessMethod\":\"PSM\",\"accountId\":\"45_7\",\"accountName\":\"Operating System-WinDomain-example.com-admin_user\",\"action\":\"PSM Connect Failed\",\"actionType\":\"Connect\",\"applicationCode\":\"PAM\",\"arrivalTimestamp\":null,\"auditCode\":\"PAM301\",\"auditType\":\"System Error\",\"checksum\":null,\"cloudAssets\":null,\"cloudIdentities\":null,\"cloudProvider\":null,\"cloudRoles\":null,\"cloudWorkspaces\":null,\"cloudWorkspacesAndRoles\":[],\"command\":\"\",\"component\":\"PSM\",\"correlationId\":null,\"customData\":null,\"identityType\":\"HUMAN\",\"message\":\"User jdoe@example.com failed to connect to 203.0.113.15 through PSM\",\"safe\":\"Windows-Servers\",\"serviceName\":\"Privilege Cloud\",\"sessionId\":\"5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01\",\"source\":\"192.0.2.10\",\"target\":\"203.0.113.15\",\"targetAccount\":\"admin_user\",\"targetPlatform\":\"WinDomain\",\"tenantId\":\"8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f\",\"timestamp\":1792406160411,\"userId\":\"c1a2b3d4-e5f6-4789-8abc-def012345678\",\"username\":\"jdoe@example.com\",\"uuid\":\"0f8e2d1c-4b3a-4c5d-8e6f-7a8b9c0d1e15\",\"vaultedAccounts\":null}",
+                "outcome": "failure",
+                "type": [
+                    "start"
+                ]
+            },
+            "idira_privilege_cloud": {
+                "audit": {
+                    "access_method": "PSM",
+                    "account_id": "45_7",
+                    "account_name": "Operating System-WinDomain-example.com-admin_user",
+                    "action_type": "Connect",
+                    "application_code": "PAM",
+                    "audit_type": "System Error",
+                    "component": "PSM",
+                    "identity_type": "HUMAN",
+                    "safe": "Windows-Servers",
+                    "service_name": "Privilege Cloud",
+                    "session_id": "5d0c3a8e-6f41-4b7e-9a2d-1c8e7f3b9a01",
+                    "target": "203.0.113.15",
+                    "target_account": "admin_user",
+                    "target_platform": "WinDomain",
+                    "tenant_id": "8c2f1e4a-3b5d-4a6c-9e7f-0a1b2c3d4e5f"
+                }
+            },
+            "message": "User jdoe@example.com failed to connect to 203.0.113.15 through PSM",
+            "related": {
+                "ip": [
+                    "192.0.2.10",
+                    "203.0.113.15"
+                ],
+                "user": [
+                    "jdoe@example.com",
+                    "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                    "admin_user"
+                ]
+            },
+            "source": {
+                "as": {
+                    "number": 64500,
+                    "organization": {
+                        "name": "Documentation ASN"
+                    }
+                },
+                "geo": {
+                    "city_name": "Las Vegas",
+                    "continent_name": "North America",
+                    "country_iso_code": "US",
+                    "country_name": "United States",
+                    "location": {
+                        "lat": 36.17497,
+                        "lon": -115.13722
+                    },
+                    "region_iso_code": "US-NV",
+                    "region_name": "Nevada"
+                },
+                "ip": "192.0.2.10"
+            },
+            "tags": [
+                "preserve_original_event",
+                "forwarded",
+                "idira_privilege_cloud-audit"
+            ],
+            "user": {
+                "id": "c1a2b3d4-e5f6-4789-8abc-def012345678",
+                "name": "jdoe@example.com"
+            }
+        }
+    ]
+}

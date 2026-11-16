@@ -1,0 +1,113 @@
+format_version: "3.4.2"
+name: idira_privilege_cloud
+title: Idira Privilege Cloud
+version: "0.1.0"
+source:
+  license: "Elastic-2.0"
+description: Collect audit logs from Idira Privilege Cloud (formerly CyberArk Privilege Cloud) with Elastic Agent.
+type: integration
+categories:
+  - security
+  - iam
+conditions:
+  kibana:
+    version: "^8.19.0 || ^9.1.0"
+  elastic:
+    subscription: "basic"
+icons:
+  - src: /img/cyberark-logo.svg
+    title: CyberArk logo
+    size: 32x32
+    type: image/svg+xml
+policy_templates:
+  - name: idira_privilege_cloud
+    title: Idira Privilege Cloud audit logs
+    description: Collect Idira Privilege Cloud audit logs.
+    inputs:
+      - type: cel
+        title: Collect Idira Privilege Cloud audit logs via API
+        description: Collect Idira Privilege Cloud audit logs from the Audit Export to SIEM API.
+        vars:
+          - name: url
+            type: url
+            title: Audit API URL
+            description: >-
+              Base URL of the Audit API shown for your SIEM integration in **Setup > Integrations > Export to SIEM**, for example `https://audit.example.com`. Do not include the `/api/audits/stream` path.
+            multi: false
+            required: true
+            show_user: true
+          - name: api_key
+            type: password
+            title: SIEM Integration API Key
+            description: The API key generated for your SIEM integration in **Setup > Integrations > Export to SIEM**.
+            multi: false
+            required: true
+            show_user: true
+            secret: true
+          - name: identity_id
+            type: text
+            title: Identity ID
+            description: >-
+              The ID of your Idira Identity tenant, for example `ABC1234`. It forms the OAuth2 token URL `https://<Identity ID>.id.cyberark.cloud/oauth2/token/<Application ID>`.
+            multi: false
+            required: true
+            show_user: true
+          - name: identity_application_id
+            type: text
+            title: OAuth2 Server Application ID
+            description: >-
+              The **Application ID** of the custom OAuth2 Server web app that grants the `isp.audit.events:read` scope. It must match exactly because it forms the last part of the token URL.
+            multi: false
+            required: true
+            show_user: true
+          - name: use_idaptive_domain
+            type: bool
+            title: Use Legacy Identity Domain
+            description: Enable for tenants whose Identity URL uses the legacy `my.idaptive.app` domain instead of `id.cyberark.cloud`.
+            multi: false
+            required: false
+            show_user: true
+            default: false
+          - name: client_id
+            type: text
+            title: Client ID
+            description: >-
+              The login name of the Idira Identity service user that is configured as an OAuth confidential client, including its tenant suffix, for example `svc_elastic@example.com`.
+            multi: false
+            required: true
+            show_user: true
+          - name: client_secret
+            type: password
+            title: Client Secret
+            description: The password of the Idira Identity service user.
+            multi: false
+            required: true
+            show_user: true
+            secret: true
+          - name: token_url
+            type: url
+            title: Token URL
+            description: >-
+              Overrides the OAuth2 token URL built from the Identity ID, the legacy domain setting and the OAuth2 Server Application ID. Set it only when your Identity host does not follow the `https://<Identity ID>.id.cyberark.cloud` pattern. When it is set, the Identity ID, the OAuth2 Server Application ID and the legacy domain setting are not used to build the token URL. Identity ID and OAuth2 Server Application ID are still required fields, so any placeholder value is accepted for them.
+            multi: false
+            required: false
+            show_user: false
+          - name: proxy_url
+            type: text
+            title: Proxy URL
+            description: >-
+              URL to proxy connections in the form of http[s]://<user>:<password>@<server name/ip>:<port>. Please ensure your username and password are in URL encoded format.
+            multi: false
+            required: false
+            show_user: false
+          - name: ssl
+            type: yaml
+            title: SSL Configuration
+            description: >-
+              SSL configuration options. See [documentation](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-ssl.html#ssl-common-config) for details.
+            multi: false
+            required: false
+            show_user: false
+owner:
+  github: elastic/security-service-integrations
+  type: elastic
